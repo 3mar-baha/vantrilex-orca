@@ -25,6 +25,23 @@ verbatim for disaster recovery.
 
 ### Active plan
 
+Plan STEP5-TERMINAL-01 (approved 2026-09-20): embedded terminal and
+multi-runner PTY panel per `docs/08-ROADMAP.md`, `docs/25-ELECTRON-IPC.md`,
+`docs/26-AGENT-LAUNCHER.md`. Scope (no `src/` changes yet — /plan gate
+only): `src/main/terminal/pty-manager.ts` (node-pty lifecycle, process-table
+tracking, graceful reaping), `src/main/terminal/spawn-wrapper.ts`
+(Windows `.cmd`/`.exe` resolution, `windowsHide: true`, no `shell: true`),
+`src/main/terminal/argv-builder.ts` (deterministic argv + resume flags for
+Claude Code, OpenCode, Codex), typed IPC handlers (`terminal:write`,
+`terminal:resize`, `terminal:exit`, `runner:launch`/`terminate`) with
+`validate.ts`-style strict validation, renderer multi-tab xterm.js panel
+(`src/renderer/src/components/terminal/`, max 3 concurrent sessions per
+REQ-001), TDD suites under `tests/terminal/` (argv units, PTY lifecycle,
+STRESS-001 concurrency/latency: 3 sessions, resize, p95 input < 100ms).
+Governing skills: tdd, clean-code-guard, test-guard, docs-guard. Tests:
+terminal unit + stress suites. Rollback baseline: `ca0d0d6274`
+(HEAD, pushed, worktree clean at /plan).
+
 Plan STEP3-FOUNDRY-01 (approved): port foundry detection, 28-file
 generator, skills, ledger, checkpoint, and guard hook from vantrilex-ts
 into `src/renderer/src/components/foundry-background/` plus
