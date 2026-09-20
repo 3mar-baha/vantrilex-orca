@@ -70,3 +70,20 @@ Whisper STT, GPT-OSS-120B brain wiring, DPAPI keyring with 10-request
 rotation, and the Ammani-only speech policy. Latency budgets (golden
 2.0s, ceiling 5.0s) are acceptance criteria, not aspirations. No Step 4
 code has been written; this entry is preparation only.
+
+### Active plan
+
+Plan STEP4-VOICE-01 (approved 2026-09-20): port the voice pipeline and
+Ammani Arabic brain per `docs/18-VOICE-PIPELINE.md` + `docs/20-KEYRING.md`.
+Scope (no `src/` changes yet — /plan gate only):
+`src/main/voice/tts.ts` (Fish Audio `s2.1-pro-free`, male voice
+`5b90451e0cd34b2788841744af7c55c3`, female `88c0375e46fa4e3b929755fa077ca5ad`,
+LRU MP3 cache), `src/main/voice/stt.ts` (Groq `whisper-large-v3-turbo`),
+`src/main/voice/brain.ts` (`openai/gpt-oss-120b`, golden 2.0s / ceiling
+5.0s), `src/main/voice/keyring.ts` (DPAPI pools, 10-request rotation),
+local Orca control tools + voice SKILL.md, TDD suites (latency
+benchmarks, rotation triggers, boundary mocks). Governing skills: tdd,
+clean-code-guard, test-guard, docs-guard. Tests: voice unit suites +
+latency benchmarks. Rollback: worktree clean at /plan; `git stash
+create` emitted no object — restore point is `origin/main @ c4c91d7697`
+(pushed 2026-09-20, remote clean).
