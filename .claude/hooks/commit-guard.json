@@ -1,0 +1,7 @@
+{
+  "name": "commit-guard",
+  "event": "PreToolUse",
+  "matcher": "git commit",
+  "policy": "Block commits with empty messages, committed secrets (.env, *.pem, credentials), or unformatted staged files. Require a Conventional Commit subject line.",
+  "source": "vantrilex-ts workspace guard (inspired by catalog reminder-before-git-push-to-review-changes)"
+}

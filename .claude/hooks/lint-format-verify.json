@@ -1,0 +1,7 @@
+{
+  "name": "lint-format-verify",
+  "event": "PostToolUse",
+  "matcher": "Edit|Write",
+  "policy": "After every file edit, run the stack linter and formatter (tsc --noEmit, eslint, prettier --check). Surface failures before continuing.",
+  "source": "vantrilex-ts workspace guard (inspired by catalog typescript-check-after-editing-ts-tsx-files)"
+}

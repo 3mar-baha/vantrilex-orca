@@ -1,0 +1,6 @@
+{
+  "name": "session-checkpoint",
+  "event": "SessionEnd",
+  "policy": "On session end, append a checkpoint entry (date, completed work, open threads, next actions) to docs/PROJECT-JOURNEY.md or the session log. Never lose in-flight context.",
+  "source": "vantrilex-ts workspace guard (inspired by catalog persist-session-state-on-end and save-state-before-context-compaction)"
+}
