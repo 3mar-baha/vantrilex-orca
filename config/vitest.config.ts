@@ -35,6 +35,8 @@ export default defineConfig({
       'config/scripts/**/*.test.mjs',
       'tests/tools/**/*.test.mjs',
       'tests/voice/**/*.test.ts',
+      'tests/terminal/**/*.test.ts',
+      'tests/terminal/**/*.test.tsx',
       'tests/e2e/**/*.unit.test.ts'
     ],
     // Why: the full suite runs heavy TS transforms plus real git/http fixtures;
