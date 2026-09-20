@@ -42,6 +42,15 @@ create` before code.
 
 ### Completed work
 
+- 2026-09-20: STEP4-VOICE-01 COMPLETED. Implementation commit `d426f80eb0`
+  (`feat(voice)`, 12 files, +746): `src/main/voice/` (`keyring.ts`,
+  `tts.ts`, `stt.ts`, `brain.ts`, `orca-tools.ts`), `tests/voice/` (5
+  suites), vitest include wiring, voice-pipeline SKILL.md. Verification:
+  vitest 23/23 green, tsc node 0 errors, oxlint 0, oxfmt applied.
+  Budgets honored: cache hit < 300ms, synthesis < 1.5s, STT < 1.0s,
+  brain golden 2.0s / ceiling 5.0s with typed abort. Key names and voice
+  reference IDs only — zero secret values in code, docs, or logs.
+
 - 2026-09-20: `refactor(foundry)` split `src/main/foundry/foundry-docs.ts`
   into `foundry-document-template.ts` (FoundryDoc, doc, FOUNDRY_META),
   `foundry-documents-foundation.ts` (12 entries),
