@@ -1,0 +1,482 @@
+[
+  {
+    "id": "win-path-001",
+    "category": "windows-paths",
+    "symptom": "JSON config fails to parse paths like C:\\new\\tool",
+    "cause": "Backslash starts JSON escape sequences (\\n newline, \\t tab).",
+    "solution": "Double every backslash in JSON strings, or use forward slashes which Windows APIs accept.",
+    "cmd": ""
+  },
+  {
+    "id": "win-path-002",
+    "category": "windows-paths",
+    "symptom": "Command fails on paths containing spaces",
+    "cause": "Unquoted paths split into separate arguments.",
+    "solution": "Quote every path with spaces; in Go prefer exec with arg slices over shell strings.",
+    "cmd": ""
+  },
+  {
+    "id": "win-path-003",
+    "category": "windows-paths",
+    "symptom": "File not found for MAX_PATH-adjacent deep trees",
+    "cause": "Classic 260-char MAX_PATH limit on legacy APIs.",
+    "solution": "Enable long paths via group policy / manifest, or prefix with \\\\.\\ for raw access.",
+    "cmd": ""
+  },
+  {
+    "id": "win-path-004",
+    "category": "windows-paths",
+    "symptom": "Trailing backslash breaks quoted path (C:\\dir\\\")",
+    "cause": "The quote is escaped by the trailing backslash.",
+    "solution": "Strip trailing separators before quoting, or double the trailing backslash.",
+    "cmd": ""
+  },
+  {
+    "id": "win-path-005",
+    "category": "windows-paths",
+    "symptom": "%VAR% not expanding in a Go-launched process",
+    "cause": "Go os.ExpandEnv uses $VAR syntax, not %VAR%.",
+    "solution": "Normalize %VAR% to $VAR before ExpandEnv, or set env explicitly via cmd.Env.",
+    "cmd": ""
+  },
+  {
+    "id": "win-path-006",
+    "category": "windows-paths",
+    "symptom": "PowerShell script blocked with execution policy error",
+    "cause": "Default Restricted/AllSigned policy blocks unsigned scripts.",
+    "solution": "Run with -ExecutionPolicy Bypass for one-shot commands; never lower the machine policy.",
+    "cmd": "powershell -NoProfile -ExecutionPolicy Bypass -File script.ps1"
+  },
+  {
+    "id": "win-path-007",
+    "category": "windows-paths",
+    "symptom": "cmd.exe quoting behaves differently from PowerShell",
+    "cause": "cmd uses \" doubling rules; PowerShell has its own parser plus native-arg passing.",
+    "solution": "Invoke binaries directly with arg slices (exec.Command). Avoid shell round-trips.",
+    "cmd": ""
+  },
+  {
+    "id": "win-path-008",
+    "category": "windows-paths",
+    "symptom": "Case-only file renames ignored by git on Windows",
+    "cause": "NTFS is case-insensitive; git sees no change.",
+    "solution": "Use git mv with an intermediate name, or set core.ignorecase=false after renaming.",
+    "cmd": "git mv Foo tmp && git mv tmp foo"
+  },
+  {
+    "id": "win-path-009",
+    "category": "windows-paths",
+    "symptom": "Temp files land in unexpected per-user cache dirs",
+    "cause": "os.CreateTemp uses %TEMP% which roams per user and session.",
+    "solution": "Pass explicit -t dirs for test tempfiles (t.TempDir in Go) and clean deferred.",
+    "cmd": ""
+  },
+  {
+    "id": "win-path-010",
+    "category": "windows-paths",
+    "symptom": "UNC path (\\\\server\\share) rejected by a tool",
+    "cause": "Some tools require drive letters or mishandle double leading slashes.",
+    "solution": "Map with net use to a drive letter for the session, or normalize to forward slashes.",
+    "cmd": "net use T: \\\\server\\share"
+  },
+  {
+    "id": "win-path-011",
+    "category": "windows-paths",
+    "symptom": "Drive-letter case mismatch breaks string path compares",
+    "cause": "C:\\ vs c:\\ compare unequal as strings.",
+    "solution": "Normalize with filepath.Clean plus case-fold on the drive prefix before comparing.",
+    "cmd": ""
+  },
+  {
+    "id": "win-path-012",
+    "category": "windows-paths",
+    "symptom": "filepath.Join produces separators a JSON consumer rejects",
+    "cause": "Backslashes need escaping in JSON payloads.",
+    "solution": "Convert to slash form with filepath.ToSlash before embedding in JSON.",
+    "cmd": ""
+  },
+  {
+    "id": "ports-001",
+    "category": "ports",
+    "symptom": "EADDRINUSE on restart (port still held)",
+    "cause": "Previous process alive, or socket stuck in TIME_WAIT.",
+    "solution": "Find the PID and kill it, or wait out TIME_WAIT; never hard-code a new port to dodge it.",
+    "cmd": "netstat -ano | findstr :8000"
+  },
+  {
+    "id": "ports-002",
+    "category": "ports",
+    "symptom": "Bind fails on 20128/8000 right after boot",
+    "cause": "Windows excluded port ranges (Hyper-V / NAT) swallow the port.",
+    "solution": "Check netsh int ipv4 show excludedportrange; pick a port outside exclusions or free one.",
+    "cmd": "netsh int ipv4 show excludedportrange protocol=tcp"
+  },
+  {
+    "id": "ports-003",
+    "category": "ports",
+    "symptom": "Server reachable on 127.0.0.1 but not localhost",
+    "cause": "localhost resolves to ::1 while the server bound IPv4 only (or reverse).",
+    "solution": "Bind dual-stack or normalize to 127.0.0.1 explicitly on both ends.",
+    "cmd": ""
+  },
+  {
+    "id": "ports-004",
+    "category": "ports",
+    "symptom": "Firewall prompt blocks first run of a dev server",
+    "cause": "Windows Defender Firewall intercepts new listeners.",
+    "solution": "Bind 127.0.0.1 during development to avoid the prompt; document the rule for LAN testing.",
+    "cmd": ""
+  },
+  {
+    "id": "ports-005",
+    "category": "ports",
+    "symptom": "SO_REUSEADDR still reports address in use",
+    "cause": "A live listener (not TIME_WAIT) owns the port; reuse only helps TIME_WAIT.",
+    "solution": "Kill the owner process; reuse flags never evict a live listener.",
+    "cmd": "taskkill /PID <pid> /F"
+  },
+  {
+    "id": "ports-006",
+    "category": "ports",
+    "symptom": "Port works locally, refused from another machine",
+    "cause": "Bound to loopback instead of 0.0.0.0, or firewall rule missing.",
+    "solution": "Bind 0.0.0.0 for LAN exposure and add an explicit inbound firewall rule.",
+    "cmd": ""
+  },
+  {
+    "id": "ports-007",
+    "category": "ports",
+    "symptom": "Two dev servers collide on the same default port",
+    "cause": "Both configs share one default with no override.",
+    "solution": "Make the port a flag/env with a documented default; fail fast with the owner PID.",
+    "cmd": ""
+  },
+  {
+    "id": "ports-008",
+    "category": "ports",
+    "symptom": "Ephemeral client ports exhausted under load tests",
+    "cause": "Thousands of short connections in TIME_WAIT drain the dynamic range.",
+    "solution": "Reuse connections (keep-alive/pools) instead of dialing per request.",
+    "cmd": ""
+  },
+  {
+    "id": "encoding-001",
+    "category": "encoding",
+    "symptom": "Diff shows every line changed after a Windows edit",
+    "cause": "CRLF vs LF line-ending flip across the whole file.",
+    "solution": "Enforce .gitattributes text=auto plus editorconfig end_of_line, then renormalize once.",
+    "cmd": "git add --renormalize ."
+  },
+  {
+    "id": "encoding-002",
+    "category": "encoding",
+    "symptom": "JSON parser chokes on a file that looks valid",
+    "cause": "UTF-8 BOM prefix is illegal in strict JSON.",
+    "solution": "Save JSON as UTF-8 without BOM; strip a leading BOM on read.",
+    "cmd": ""
+  },
+  {
+    "id": "encoding-003",
+    "category": "encoding",
+    "symptom": "Go vet/gofmt churn on files edited on Windows",
+    "cause": "CRLF line endings in Go sources.",
+    "solution": "Keep Go sources LF-only via .gitattributes (*.go text eol=lf).",
+    "cmd": ""
+  },
+  {
+    "id": "encoding-004",
+    "category": "encoding",
+    "symptom": "PowerShell mangles UTF-8 CLI output (mojibake)",
+    "cause": "Console code page is legacy (437/1252), not UTF-8.",
+    "solution": "Switch with chcp 65001 for the session and prefer -NoProfile UTF-8 pipelines.",
+    "cmd": "chcp 65001"
+  },
+  {
+    "id": "encoding-005",
+    "category": "encoding",
+    "symptom": "Checksums differ for identical-looking files",
+    "cause": "Line-ending or BOM bytes differ under the hood.",
+    "solution": "Compare canonicalized bytes (normalize CRLF, strip BOM) before hashing.",
+    "cmd": ""
+  },
+  {
+    "id": "encoding-006",
+    "category": "encoding",
+    "symptom": "git shows-modified on untouched files after clone",
+    "cause": "core.autocrlf converting on checkout against repo LF.",
+    "solution": "Set core.autocrlf=input on Windows with text=auto attributes, re-checkout once.",
+    "cmd": "git config core.autocrlf input"
+  },
+  {
+    "id": "encoding-007",
+    "category": "encoding",
+    "symptom": "Emoji/unicode corrupted in terminal output files",
+    "cause": "Redirection through a non-UTF-8 code page.",
+    "solution": "Write files from the process (UTF-8) instead of shell redirection.",
+    "cmd": ""
+  },
+  {
+    "id": "encoding-008",
+    "category": "encoding",
+    "symptom": "Markdown renders stray characters at file start",
+    "cause": "Invisible BOM or zero-width characters.",
+    "solution": "Open as hex, strip leading EF BB BF, save clean UTF-8.",
+    "cmd": ""
+  },
+  {
+    "id": "encoding-009",
+    "category": "encoding",
+    "symptom": "Python reads config with trailing \\r characters",
+    "cause": "File opened in binary or newline='' mode on CRLF content.",
+    "solution": "Open text with universal newlines (default) or newline=None explicitly.",
+    "cmd": ""
+  },
+  {
+    "id": "encoding-010",
+    "category": "encoding",
+    "symptom": "Cross-platform test golden files mismatch",
+    "cause": "Goldens recorded with platform-native endings.",
+    "solution": "Normalize both sides to LF before comparing in tests.",
+    "cmd": ""
+  },
+  {
+    "id": "venv-001",
+    "category": "venv",
+    "symptom": "pip installs land globally instead of the project env",
+    "cause": "venv not activated in that shell session.",
+    "solution": "Activate per shell (.\\venv\\Scripts\\Activate.ps1) or always use venv\\Scripts\\python -m pip.",
+    "cmd": ".\\venv\\Scripts\\Activate.ps1"
+  },
+  {
+    "id": "venv-002",
+    "category": "venv",
+    "symptom": "Scripts/ vs bin/ activate confusion across OS",
+    "cause": "Windows venvs use Scripts\\, POSIX uses bin/.",
+    "solution": "Branch activation paths per OS in docs and scripts; never hard-code one.",
+    "cmd": ""
+  },
+  {
+    "id": "venv-003",
+    "category": "venv",
+    "symptom": "IDE runs the wrong interpreter despite a venv",
+    "cause": "Editor defaulted to global Python.",
+    "solution": "Pin the interpreter to the venv python explicitly in workspace settings.",
+    "cmd": ""
+  },
+  {
+    "id": "venv-004",
+    "category": "venv",
+    "symptom": "Works on my machine but not in CI",
+    "cause": "Unpinned transitive deps drift between installs.",
+    "solution": "Commit pip freeze output as requirements.lock and install with --no-deps drift checks.",
+    "cmd": "pip freeze > requirements.lock"
+  },
+  {
+    "id": "venv-005",
+    "category": "venv",
+    "symptom": "System packages leak into the venv",
+    "cause": "venv created with --system-site-packages.",
+    "solution": "Recreate without the flag; vendor the few needed packages explicitly.",
+    "cmd": "python -m venv venv"
+  },
+  {
+    "id": "venv-006",
+    "category": "venv",
+    "symptom": "conda and venv fight over PATH",
+    "cause": "Both shims prepend PATH; first match wins unpredictably.",
+    "solution": "Pick one env manager per project and deactivate the other in that shell.",
+    "cmd": "conda deactivate"
+  },
+  {
+    "id": "venv-007",
+    "category": "venv",
+    "symptom": "which python points at Store shim, not the venv",
+    "cause": "PATH order puts the app-execution alias first.",
+    "solution": "Invoke the venv python by absolute path in scripts and tasks.",
+    "cmd": ""
+  },
+  {
+    "id": "venv-008",
+    "category": "venv",
+    "symptom": "pip cache serves stale wheels offline",
+    "cause": "Cache hit on an outdated wheel version.",
+    "solution": "Bust with --no-cache-dir for release builds; keep cache for dev speed.",
+    "cmd": "pip install --no-cache-dir -r requirements.txt"
+  },
+  {
+    "id": "gomod-001",
+    "category": "go-modules",
+    "symptom": "Build uses stale dependency code after go get",
+    "cause": "Module cache holds the old version; flags pin mod=readonly.",
+    "solution": "Run go mod tidy and rebuild; clear GOMODCACHE only as a last resort.",
+    "cmd": "go mod tidy"
+  },
+  {
+    "id": "gomod-002",
+    "category": "go-modules",
+    "symptom": "import cycle not allowed in test build",
+    "cause": "Circular package imports (often via test helpers).",
+    "solution": "Extract the shared surface into a third package both sides import.",
+    "cmd": ""
+  },
+  {
+    "id": "gomod-003",
+    "category": "go-modules",
+    "symptom": "Vendor directory ignored, network hit on every build",
+    "cause": "No vendor/ dir or -mod=mod overriding vendoring.",
+    "solution": "Commit go mod vendor output and build with -mod=vendor for hermetic builds.",
+    "cmd": "go mod vendor"
+  },
+  {
+    "id": "gomod-004",
+    "category": "go-modules",
+    "symptom": "Checksum mismatch (GOSUMDB) on corporate proxy",
+    "cause": "Proxy rewrites break sumdb verification.",
+    "solution": "Point GOPROXY at the corporate proxy and set GONOSUMDB/GOSUMDB=off per policy.",
+    "cmd": ""
+  },
+  {
+    "id": "gomod-005",
+    "category": "go-modules",
+    "symptom": "Nested go.mod files confuse tooling",
+    "cause": "Accidental module roots inside subdirectories.",
+    "solution": "One module root per repo; delete stray go.mod files or split into workspaces.",
+    "cmd": "go work init"
+  },
+  {
+    "id": "gomod-006",
+    "category": "go-modules",
+    "symptom": "Tests pass stale: caching hides a regression",
+    "cause": "Go test caching replays old green results.",
+    "solution": "Rerun with -count=1 for verification runs; keep cache for iteration.",
+    "cmd": "go test -count=1 ./..."
+  },
+  {
+    "id": "gomod-007",
+    "category": "go-modules",
+    "symptom": "replace directive pins a local fork forever",
+    "cause": "Temporary replace left in go.mod after the fix.",
+    "solution": "Remove replace lines before release; CI should fail on stray replaces.",
+    "cmd": ""
+  },
+  {
+    "id": "gomod-008",
+    "category": "go-modules",
+    "symptom": "Minimal version selection picks an ancient dep",
+    "cause": "MVS honors the oldest allowed version in the graph.",
+    "solution": "Bump the direct requirement explicitly with go get pkg@version.",
+    "cmd": "go get example.com/mod@v1.2.3"
+  },
+  {
+    "id": "gomod-009",
+    "category": "go-modules",
+    "symptom": "go vet passes but build tags exclude test files",
+    "cause": "Files gated behind //go:build tags compiled out.",
+    "solution": "Vet with -tags for each target platform in CI.",
+    "cmd": "go vet -tags windows ./..."
+  },
+  {
+    "id": "gomod-010",
+    "category": "go-modules",
+    "symptom": "Module cache grows unbounded on shared runners",
+    "cause": "Every version ever fetched is retained.",
+    "solution": "Schedule go clean -modcache on runner recycle, never mid-pipeline.",
+    "cmd": "go clean -modcache"
+  },
+  {
+    "id": "npm-001",
+    "category": "npm",
+    "symptom": "CI installs different tree than local",
+    "cause": "package.json without lockfile, or lockfile ignored.",
+    "solution": "Commit the lockfile and install with npm ci in CI.",
+    "cmd": "npm ci"
+  },
+  {
+    "id": "npm-002",
+    "category": "npm",
+    "symptom": "ERESOLVE peer dependency conflict blocks install",
+    "cause": "Two packages demand incompatible peers.",
+    "solution": "Align versions first; use --legacy-peer-deps only as a documented last resort.",
+    "cmd": ""
+  },
+  {
+    "id": "npm-003",
+    "category": "npm",
+    "symptom": "npx runs a stale global instead of local binary",
+    "cause": "Global bin shadows node_modules/.bin on PATH.",
+    "solution": "Call node_modules/.bin directly or npx --no-install to force local.",
+    "cmd": "npx --no-install <pkg>"
+  },
+  {
+    "id": "npm-004",
+    "category": "npm",
+    "symptom": "Postinstall scripts execute unreviewed code",
+    "cause": "Lifecycle scripts run with user privileges on install.",
+    "solution": "Audit new deps, set ignore-scripts for untrusted ones, review diffs.",
+    "cmd": "npm install --ignore-scripts"
+  },
+  {
+    "id": "npm-005",
+    "category": "npm",
+    "symptom": "Node version mismatch breaks native modules",
+    "cause": "ABI differs across majors; bindings compiled for another.",
+    "solution": "Pin engines in package.json and rebuild after switching versions.",
+    "cmd": "npm rebuild"
+  },
+  {
+    "id": "npm-006",
+    "category": "npm",
+    "symptom": "Disk bloat from duplicated nested node_modules",
+    "cause": "Hoisting conflicts force nested copies.",
+    "solution": "Dedupe regularly; prefer workspaces over deep nesting.",
+    "cmd": "npm dedupe"
+  },
+  {
+    "id": "npm-007",
+    "category": "npm",
+    "symptom": "audit reports unactionable noise on every install",
+    "cause": "Dev-only advisory paths flagged in production surface.",
+    "solution": "Audit production deps only and triage by exploitability, not count.",
+    "cmd": "npm audit --omit=dev"
+  },
+  {
+    "id": "npm-008",
+    "category": "npm",
+    "symptom": "Workspace package resolves to published copy, not local",
+    "cause": "Version bumps publish over the workspace link.",
+    "solution": "Reference workspaces by name with workspace: protocol or file: links.",
+    "cmd": ""
+  },
+  {
+    "id": "git-001",
+    "category": "git",
+    "symptom": "Lost work after a risky rebase",
+    "cause": "No checkpoint commit or stash before rewriting.",
+    "solution": "Create git stash create or a checkpoint tag before every rewrite.",
+    "cmd": "git stash create"
+  },
+  {
+    "id": "git-002",
+    "category": "git",
+    "symptom": "Shallow clone cannot describe or bisect",
+    "cause": "--depth 1 omits the history those commands need.",
+    "solution": "Deepen with git fetch --unshallow when history operations are required.",
+    "cmd": "git fetch --unshallow"
+  },
+  {
+    "id": "git-003",
+    "category": "git",
+    "symptom": "LFS files checkout as pointer stubs",
+    "cause": "LFS smudge filter missing or skipped.",
+    "solution": "Install git-lfs and pull LFS objects explicitly once.",
+    "cmd": "git lfs pull"
+  },
+  {
+    "id": "git-004",
+    "category": "git",
+    "symptom": "CRLF flip-flop in every PR from mixed OS contributors",
+    "cause": "No .gitattributes policy; each OS converts differently.",
+    "solution": "Commit text=auto with explicit eol rules per extension, renormalize once.",
+    "cmd": "git add --renormalize ."
+  }
+]
