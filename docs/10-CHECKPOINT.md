@@ -59,6 +59,14 @@ create` before code.
 
 ### Completed work
 
+- 2026-09-20: STEP5-TERMINAL-01 COMPLETED. Implementation commit 1
+  (core engine + panel) and commit 2 (preload `runnerTerminal` bridge key,
+  `PreloadApi` registration, web fallback seam, main IPC bootstrap with
+  `terminal:write`/`terminal:exit` broadcast). Verification: 271/271 green
+  across 35 files (terminal, panel, web composition suites), tsc node+web
+  clean, oxlint clean, oxfmt applied, `verify:rpc-params-catalog` clean.
+  STRESS-001: 3 concurrent sessions, resize storm, p95 input < 100ms.
+
 - 2026-09-20: STEP4-VOICE-01 COMPLETED. Implementation commit `d426f80eb0`
   (`feat(voice)`, 12 files, +746): `src/main/voice/` (`keyring.ts`,
   `tts.ts`, `stt.ts`, `brain.ts`, `orca-tools.ts`), `tests/voice/` (5
