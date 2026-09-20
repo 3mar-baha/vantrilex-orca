@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ConfirmationDialogProvider } from './components/confirmation-dialog'
@@ -8,6 +8,7 @@ import { LinkRoutingPreferenceDialogProvider } from './components/link-routing-p
 import { SkillFreshnessNudge } from './components/skills/SkillFreshnessNudge'
 import PinnedTabCloseDialog from './components/terminal-pane/PinnedTabCloseDialog'
 import RunningTerminalCloseDialog from './components/terminal-pane/RunningTerminalCloseDialog'
+import { StartupSplash } from './components/startup-splash/StartupSplash'
 import WorktreeBaseFallbackDialog from './components/WorktreeBaseFallbackDialog'
 import { useUnreadDockBadge } from './hooks/useUnreadDockBadge'
 import { AppBackgroundServices } from './app-shell/AppBackgroundServices'
@@ -34,6 +35,7 @@ import { useWindowVisibilityEffects } from './app-shell/use-window-visibility-ef
 
 function App(): React.JSX.Element {
   const layout = useAppChromeLayout()
+  const [splashDone, setSplashDone] = useState(false)
   const floatingWorkspace = useFloatingWorkspacePanel()
   const onboardingGate = useOnboardingAndFeatureTips()
   const clearUnreadDockBadge = useUnreadDockBadge()
@@ -110,6 +112,8 @@ function App(): React.JSX.Element {
       <RunningTerminalCloseDialog />
       {/* Why: Electron's drag-region hit-test is DOM-order-based (ignores z-index); render last so WindowControls stay clickable. */}
       {hasCustomTitleBar && <WindowControls />}
+      {/* Why: the launch splash sits above everything (including WindowControls) for its few seconds so any click skips it. */}
+      {!splashDone && <StartupSplash onDone={() => setSplashDone(true)} />}
     </div>
   )
 }
