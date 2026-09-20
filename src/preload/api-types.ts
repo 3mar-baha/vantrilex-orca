@@ -26,6 +26,7 @@ import type { EmulatorApi } from './api/emulator-api'
 import type { EphemeralVmApi } from './api/ephemeral-vm-api'
 import type { ExportApi, FilesystemApi } from './api/filesystem-api'
 import type { FoundryApi } from './api/foundry-api'
+import type { RunnerTerminalApi } from './api/runner-terminal-api'
 import type { GitInspectionApi } from './api/git-inspection-api'
 import type { GitOperationApi } from './api/git-operation-api'
 import type { GithubAccountApi } from './api/github-account-api'
@@ -149,6 +150,7 @@ export type PreloadApi = {
   gitBash: RuntimeApi['gitBash']
   plugins: PluginsApi
   foundry: FoundryApi
+  runnerTerminal: RunnerTerminalApi
   agentStatus: AgentStatusApi
   mobile: MobileApi
   speech: SpeechApi
@@ -162,6 +164,13 @@ export type { BrowserApi, DetectedBrowserInfo, DetectedBrowserProfileInfo } from
 export type { EmulatorApi } from './api/emulator-api'
 export type { ExportApi } from './api/filesystem-api'
 export type { FoundryApi } from './api/foundry-api'
+export type {
+  RunnerLaunchRequest,
+  RunnerLaunchResult,
+  RunnerTerminalApi,
+  TerminalDataEvent,
+  TerminalExitEvent
+} from './api/runner-terminal-api'
 export type {
   NativeChatApi,
   NativeChatAppendedMessages,

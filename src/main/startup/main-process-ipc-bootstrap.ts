@@ -1,12 +1,45 @@
-import { ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
+import { statSync } from 'node:fs'
 import { registerFoundryIpcHandlers } from '../foundry/foundry-ipc'
+import {
+  createTerminalManager,
+  registerTerminalIpc,
+  type SessionEvent
+} from '../terminal/terminal-ipc'
 import { recoverLegacyWorkerTerminalsForRendererStartup } from './legacy-worker-renderer-recovery'
 import { logStartupMilestone } from './startup-diagnostics'
 import { mainProcessState as state } from './main-process-state'
 import { resolveOpenedMarkdownDocuments } from './os-opened-markdown-files'
 
+function isWorkspaceDir(path: string): boolean {
+  try {
+    return statSync(path).isDirectory()
+  } catch {
+    return false
+  }
+}
+
+function broadcastSessionEvent(event: SessionEvent): void {
+  const channel = event.type === 'data' ? 'terminal:write' : 'terminal:exit'
+  const payload =
+    event.type === 'data'
+      ? { sessionId: event.id, chunk: event.chunk }
+      : { sessionId: event.id, code: event.code }
+  for (const window of BrowserWindow.getAllWindows()) {
+    if (!window.isDestroyed()) {
+      window.webContents.send(channel, payload)
+    }
+  }
+}
+
+function registerTerminalIpcHandlers(): void {
+  const deps = createTerminalManager(broadcastSessionEvent, isWorkspaceDir)
+  registerTerminalIpc(ipcMain, deps)
+}
+
 export function registerMainProcessIpcHandlers(): void {
   registerFoundryIpcHandlers()
+  registerTerminalIpcHandlers()
   ipcMain.handle('app:awaitFirstWindowStartupServices', async () => {
     await Promise.all([
       state.firstWindowStartupServicesReady,

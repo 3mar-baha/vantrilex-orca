@@ -8,6 +8,8 @@ import {
 } from './terminal-handlers'
 import { PtySessionManager, type SessionEvent } from './pty-manager'
 
+export type { SessionEvent }
+
 export type IpcHandleSeed = {
   handle: (channel: string, listener: (event: unknown, ...args: unknown[]) => unknown) => void
 }
