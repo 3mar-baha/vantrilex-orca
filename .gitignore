@@ -95,6 +95,8 @@ design-docs/
 # and the tracked reference docs linked from AGENTS.md / README.md).
 docs/**
 !docs/
+# Vantrilex canonical documentation suite and master upgrade plan (tracked).
+!docs/*.md
 # The deployable docs app is source, not local engineering notes.
 !docs/site/
 !docs/site/**
