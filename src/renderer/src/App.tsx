@@ -8,6 +8,9 @@ import { LinkRoutingPreferenceDialogProvider } from './components/link-routing-p
 import { SkillFreshnessNudge } from './components/skills/SkillFreshnessNudge'
 import PinnedTabCloseDialog from './components/terminal-pane/PinnedTabCloseDialog'
 import RunningTerminalCloseDialog from './components/terminal-pane/RunningTerminalCloseDialog'
+import { FoundryToasts } from './components/foundry/FoundryToasts'
+import { useFoundryBackgroundProvision } from './components/foundry/use-foundry-background-provision'
+import { useActiveRepo } from './store/selectors'
 import { StartupSplash } from './components/startup-splash/StartupSplash'
 import WorktreeBaseFallbackDialog from './components/WorktreeBaseFallbackDialog'
 import { useUnreadDockBadge } from './hooks/useUnreadDockBadge'
@@ -35,6 +38,8 @@ import { useWindowVisibilityEffects } from './app-shell/use-window-visibility-ef
 
 function App(): React.JSX.Element {
   const layout = useAppChromeLayout()
+  const activeRepo = useActiveRepo()
+  useFoundryBackgroundProvision(activeRepo?.path ?? null)
   const [splashDone, setSplashDone] = useState(false)
   const floatingWorkspace = useFloatingWorkspacePanel()
   const onboardingGate = useOnboardingAndFeatureTips()
@@ -107,6 +112,7 @@ function App(): React.JSX.Element {
       </TooltipProvider>
       <Toaster closeButton toastOptions={{ className: 'font-sans text-sm' }} />
       <SkillFreshnessNudge />
+      <FoundryToasts />
       <WorktreeBaseFallbackDialog />
       <PinnedTabCloseDialog />
       <RunningTerminalCloseDialog />

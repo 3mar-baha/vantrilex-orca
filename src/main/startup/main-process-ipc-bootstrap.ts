@@ -1,10 +1,12 @@
 import { ipcMain } from 'electron'
+import { registerFoundryIpcHandlers } from '../foundry/foundry-ipc'
 import { recoverLegacyWorkerTerminalsForRendererStartup } from './legacy-worker-renderer-recovery'
 import { logStartupMilestone } from './startup-diagnostics'
 import { mainProcessState as state } from './main-process-state'
 import { resolveOpenedMarkdownDocuments } from './os-opened-markdown-files'
 
 export function registerMainProcessIpcHandlers(): void {
+  registerFoundryIpcHandlers()
   ipcMain.handle('app:awaitFirstWindowStartupServices', async () => {
     await Promise.all([
       state.firstWindowStartupServicesReady,

@@ -25,6 +25,7 @@ import type { DocPreviewApi } from './api/doc-preview-api'
 import type { EmulatorApi } from './api/emulator-api'
 import type { EphemeralVmApi } from './api/ephemeral-vm-api'
 import type { ExportApi, FilesystemApi } from './api/filesystem-api'
+import type { FoundryApi } from './api/foundry-api'
 import type { GitInspectionApi } from './api/git-inspection-api'
 import type { GitOperationApi } from './api/git-operation-api'
 import type { GithubAccountApi } from './api/github-account-api'
@@ -147,6 +148,7 @@ export type PreloadApi = {
   pwsh: RuntimeApi['pwsh']
   gitBash: RuntimeApi['gitBash']
   plugins: PluginsApi
+  foundry: FoundryApi
   agentStatus: AgentStatusApi
   mobile: MobileApi
   speech: SpeechApi
@@ -159,6 +161,7 @@ export type { AppApi } from './api/app-api'
 export type { BrowserApi, DetectedBrowserInfo, DetectedBrowserProfileInfo } from './api/browser-api'
 export type { EmulatorApi } from './api/emulator-api'
 export type { ExportApi } from './api/filesystem-api'
+export type { FoundryApi } from './api/foundry-api'
 export type {
   NativeChatApi,
   NativeChatAppendedMessages,
