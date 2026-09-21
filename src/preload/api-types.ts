@@ -26,7 +26,9 @@ import type { EmulatorApi } from './api/emulator-api'
 import type { EphemeralVmApi } from './api/ephemeral-vm-api'
 import type { ExportApi, FilesystemApi } from './api/filesystem-api'
 import type { FoundryApi } from './api/foundry-api'
+import type { RelayApi } from './api/relay-api'
 import type { RunnerTerminalApi } from './api/runner-terminal-api'
+import type { VoiceApi } from './api/voice-api'
 import type { GitInspectionApi } from './api/git-inspection-api'
 import type { GitOperationApi } from './api/git-operation-api'
 import type { GithubAccountApi } from './api/github-account-api'
@@ -151,6 +153,8 @@ export type PreloadApi = {
   plugins: PluginsApi
   foundry: FoundryApi
   runnerTerminal: RunnerTerminalApi
+  voice: VoiceApi
+  relay: RelayApi
   agentStatus: AgentStatusApi
   mobile: MobileApi
   speech: SpeechApi
@@ -164,6 +168,8 @@ export type { BrowserApi, DetectedBrowserInfo, DetectedBrowserProfileInfo } from
 export type { EmulatorApi } from './api/emulator-api'
 export type { ExportApi } from './api/filesystem-api'
 export type { FoundryApi } from './api/foundry-api'
+export type { RelayApi, RelayApproval } from './api/relay-api'
+export type { VoiceApi, VoiceName } from './api/voice-api'
 export type {
   RunnerLaunchRequest,
   RunnerLaunchResult,

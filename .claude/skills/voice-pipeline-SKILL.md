@@ -1,6 +1,6 @@
 # voice-pipeline
 
- voice operation for the Vantrilex Agentic Workbench & Launcher.
+voice operation for the Vantrilex Agentic Workbench & Launcher.
 
 ## When to use
 
@@ -35,3 +35,6 @@ Jordanian Arabic only; code, paths, and commands stay in English.
 - Every pipeline hop is timed against `docs/18-VOICE-PIPELINE.md`
   budgets; breaches file runbook entries.
 - Cancel drains the pipeline within 200ms.
+- Executable commands travel as `!run <command>` lines inside the brain
+  reply. The renderer forwards each to the terminal target with a submit
+  newline; lines without the prefix are speech only, never executed.

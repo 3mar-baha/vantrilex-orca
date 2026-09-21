@@ -8,6 +8,7 @@ export function createWebRunnerTerminalApi(): Partial<PreloadApi> {
   return {
     runnerTerminal: {
       launch: () => Promise.reject(unsupported('launch')),
+      inject: () => Promise.reject(unsupported('inject')),
       send: () => Promise.reject(unsupported('send')),
       resize: () => Promise.reject(unsupported('resize')),
       terminate: () => Promise.reject(unsupported('terminate')),

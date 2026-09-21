@@ -1,6 +1,15 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow, app, ipcMain } from 'electron'
 import { statSync } from 'node:fs'
+import { join } from 'node:path'
 import { registerFoundryIpcHandlers } from '../foundry/foundry-ipc'
+import { MobileRelay } from '../mobile-relay/relay-server'
+import { registerRelayIpc, relayServiceFrom } from '../mobile-relay/relay-ipc'
+import { AmmaniBrain } from '../voice/brain'
+import { DpapiStore } from '../voice/dpapi-store'
+import { GroqStt } from '../voice/stt'
+import { FishTts } from '../voice/tts'
+import { Keyring } from '../voice/keyring'
+import { createVoiceService, registerVoiceIpc } from '../voice/voice-ipc'
 import {
   createTerminalManager,
   registerTerminalIpc,
@@ -37,9 +46,34 @@ function registerTerminalIpcHandlers(): void {
   registerTerminalIpc(ipcMain, deps)
 }
 
+function registerVoiceIpcHandlers(): void {
+  const file = join(app.getPath('userData'), 'vantrilex', 'keyring.json')
+  const keyring = new Keyring(new DpapiStore(file))
+  const service = createVoiceService({
+    tts: new FishTts({ keyring }),
+    stt: new GroqStt({ keyring }),
+    brain: new AmmaniBrain({ keyring })
+  })
+  registerVoiceIpc(ipcMain, service)
+}
+
+function registerRelayIpcHandlers(): void {
+  const relay = new MobileRelay()
+  relay.onApproval((verdict) => {
+    for (const window of BrowserWindow.getAllWindows()) {
+      if (!window.isDestroyed()) {
+        window.webContents.send('relay:approval', verdict)
+      }
+    }
+  })
+  registerRelayIpc(ipcMain, relayServiceFrom(relay))
+}
+
 export function registerMainProcessIpcHandlers(): void {
   registerFoundryIpcHandlers()
   registerTerminalIpcHandlers()
+  registerVoiceIpcHandlers()
+  registerRelayIpcHandlers()
   ipcMain.handle('app:awaitFirstWindowStartupServices', async () => {
     await Promise.all([
       state.firstWindowStartupServicesReady,

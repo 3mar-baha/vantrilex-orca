@@ -12,7 +12,9 @@ import { pwshApi } from './api/pwsh-bridge'
 import { gitBashApi } from './api/git-bash-bridge'
 import { pluginsApi } from './api/plugins-bridge'
 import { foundryApi } from './api/foundry-bridge'
+import { relayApi } from './api/relay-bridge'
 import { runnerTerminalApi } from './api/runner-terminal-bridge'
+import { voiceApi } from './api/voice-bridge'
 import { reposApi } from './api/repos-bridge'
 import { projectsApi } from './api/projects-bridge'
 import { projectGroupsApi } from './api/project-groups-bridge'
@@ -109,6 +111,8 @@ const api = {
   plugins: pluginsApi,
   foundry: foundryApi,
   runnerTerminal: runnerTerminalApi,
+  voice: voiceApi,
+  relay: relayApi,
   repos: reposApi,
   projects: projectsApi,
   projectGroups: projectGroupsApi,

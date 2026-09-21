@@ -1,5 +1,6 @@
 import * as pty from 'node-pty'
 import {
+  handleRunnerInject,
   handleRunnerLaunch,
   handleRunnerTerminate,
   handleTerminalResize,
@@ -35,6 +36,7 @@ export function createTerminalManager(
 
 export function registerTerminalIpc(ipc: IpcHandleSeed, deps: TerminalDeps): void {
   ipc.handle('runner:launch', (_event, payload: unknown) => handleRunnerLaunch(deps, payload))
+  ipc.handle('runner:inject', (_event, payload: unknown) => handleRunnerInject(deps, payload))
   ipc.handle('runner:terminate', (_event, payload: unknown) => handleRunnerTerminate(deps, payload))
   ipc.handle('runner:send', (_event, payload: unknown) => handleTerminalWrite(deps, payload))
   ipc.handle('terminal:resize', (_event, payload: unknown) => handleTerminalResize(deps, payload))

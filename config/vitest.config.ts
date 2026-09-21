@@ -35,6 +35,7 @@ export default defineConfig({
       'config/scripts/**/*.test.mjs',
       'tests/tools/**/*.test.mjs',
       'tests/voice/**/*.test.ts',
+      'tests/mobile/**/*.test.ts',
       'tests/terminal/**/*.test.ts',
       'tests/terminal/**/*.test.tsx',
       'tests/ui/**/*.test.ts',

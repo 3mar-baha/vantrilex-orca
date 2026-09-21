@@ -33,7 +33,7 @@ import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
 import { useActiveRepo } from '../../store/selectors'
 import { MicToggle } from '../voice/MicToggle'
 import { VoiceSelector } from '../voice/VoiceSelector'
-import { micBridge, voiceStore } from '../voice/voice-ui-state'
+import { micBridge, voiceLoop, voiceStore } from '../voice/voice-ui-state'
 import { ShowcaseButton } from '../showcase/ShowcaseButton'
 import { createShowcaseRunner } from '../showcase/showcase-runner'
 import { MobilePairingModal } from '../mobile/MobilePairingModal'
@@ -257,8 +257,16 @@ export function StatusBarSurface({
         <RemoteServerUpdateStatusSegment iconOnly={iconOnly} />
         <SkillUpdateStatusSegment iconOnly={iconOnly} />
         <UpdateStatusSegment compact={compact} iconOnly={iconOnly} />
-        <MicToggle bridge={micBridge} iconOnly={iconOnly} />
-        <ShowcaseButton runner={createShowcaseRunner(activeRepo?.path ?? null, window.api.shell)} />
+        <MicToggle
+          bridge={micBridge}
+          iconOnly={iconOnly}
+          loop={voiceLoop}
+          voice={voiceStore.getVoice()}
+        />
+        <ShowcaseButton
+          runner={createShowcaseRunner(activeRepo?.path ?? null, window.api.shell)}
+          injector={{ inject: (prompt) => window.api.runnerTerminal.inject(prompt) }}
+        />
         <VoiceSelector store={voiceStore} />
         <button
           data-testid="pairing-trigger"
@@ -274,7 +282,7 @@ export function StatusBarSurface({
         </button>
         {pairingOpen ? (
           <MobilePairingModal
-            relay={createMobileRelay(window.api.mobile)}
+            relay={createMobileRelay(window.api.relay)}
             open
             onClose={() => setPairingOpen(false)}
           />

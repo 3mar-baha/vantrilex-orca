@@ -1,4 +1,5 @@
 import type { MicBridge } from './MicToggle'
+import type { VoiceLoop } from './MicToggle'
 import type { VoiceChoice, VoiceStore } from './VoiceSelector'
 
 const ARMED_KEY = 'vantrilex:voice:armed'
@@ -33,5 +34,14 @@ export const voiceStore: VoiceStore = {
   getVoice: () => (read(VOICE_KEY, 'male') === 'female' ? 'female' : 'male'),
   setVoice: async (voice: VoiceChoice) => {
     write(VOICE_KEY, voice)
+  }
+}
+
+export const voiceLoop: VoiceLoop = {
+  transcribe: (audio) => window.api.voice.transcribe(audio),
+  think: (prompt) => window.api.voice.think(prompt),
+  speak: async (text, voice) => {
+    const clip = await window.api.voice.speak(text, voice)
+    return { audio: clip.audio }
   }
 }

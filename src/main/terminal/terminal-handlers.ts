@@ -94,6 +94,27 @@ export function handleRunnerLaunch(
   return { sessionId: launched.id, pid: launched.pid }
 }
 
+export function handleRunnerInject(deps: TerminalDeps, payload: unknown): { sessionId: string } {
+  if (!isRecord(payload)) {
+    throw new TerminalValidationError('Terminal request must be an object')
+  }
+  const prompt = readString(payload, 'prompt')
+  const requested =
+    typeof payload['sessionId'] === 'string' && (payload['sessionId'] as string).trim() !== ''
+      ? (payload['sessionId'] as string)
+      : deps.manager.latestId()
+  if (!requested) {
+    throw new TerminalValidationError('No active runner session — open a runner tab first')
+  }
+  const submitted = prompt.endsWith('\n') ? prompt : `${prompt}\n`
+  try {
+    deps.manager.write(requested, submitted)
+  } catch (error) {
+    throw new TerminalValidationError((error as Error).message)
+  }
+  return { sessionId: requested }
+}
+
 export function handleRunnerTerminate(deps: TerminalDeps, payload: unknown): { exited: boolean } {
   const sessionId = readSession(payload)
   try {

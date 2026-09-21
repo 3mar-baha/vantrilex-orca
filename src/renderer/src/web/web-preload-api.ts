@@ -45,7 +45,9 @@ import { createWebSettingsApi } from './preload-api/web-settings-api'
 import { createShellApi } from './preload-api/web-shell-api'
 import { createWebStarNagApi } from './preload-api/web-star-nag-api'
 import { createWebFoundryApi } from './preload-api/web-foundry-api'
+import { createWebRelayApi } from './preload-api/web-relay-api'
 import { createWebRunnerTerminalApi } from './preload-api/web-runner-terminal-api'
+import { createWebVoiceApi } from './preload-api/web-voice-api'
 import { createWebTelemetryApi } from './preload-api/web-telemetry-api'
 import { createPtyApi, createSshApi } from './preload-api/web-terminal-api'
 import { createWebUiApi } from './preload-api/web-ui-api'
@@ -137,6 +139,8 @@ function createWebPreloadApi(): Partial<PreloadApi> {
     ...createWebAgentStatusApi(),
     ...createWebFoundryApi(),
     ...createWebRunnerTerminalApi(),
+    ...createWebVoiceApi(),
+    ...createWebRelayApi(),
     ...createWebMobileApi(),
     ...createWebTelemetryApi()
   }

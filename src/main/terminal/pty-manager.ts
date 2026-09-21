@@ -112,6 +112,10 @@ export class PtySessionManager {
     return this.sessions.size
   }
 
+  latestId(): string | null {
+    return this.sessions.size === 0 ? null : ([...this.sessions.keys()].at(-1) as string)
+  }
+
   private session(id: string): Session {
     const session = this.sessions.get(id)
     if (!session) {

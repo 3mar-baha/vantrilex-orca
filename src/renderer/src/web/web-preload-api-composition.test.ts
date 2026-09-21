@@ -73,6 +73,8 @@ describe('web preload API composition', () => {
       'agentStatus',
       'foundry',
       'runnerTerminal',
+      'voice',
+      'relay',
       'mobile',
       'telemetryTrack',
       'telemetrySetOptIn',
