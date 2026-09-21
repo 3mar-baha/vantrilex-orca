@@ -92,6 +92,16 @@ create` before code.
 
 ### Completed work
 
+- 2026-09-21: STEP8-INTEGRATION-01 COMPLETED (post-v1.0.0). Commit
+  `f8af99807c` (`feat(integration)`, 39 files, +1298/−42): full voice
+  loop (DPAPI keyring store, voice IPC + `window.api.voice`, MicToggle
+  MediaRecorder capture → STT → brain → `!run` extraction → TTS MP3
+  playback), showcase shift-click prompt injection (`runner:inject`
+  → newest alive session), mobile LAN relay (0.0.0.0:8787, single-use
+  120s nonces, approval queue, `window.api.relay`). Verification:
+  785/785 across 119 files, tsc node+web 0, oxlint 0, design-system 0.
+  Keys enter via future intake UI; relay binds LAN with nonce-auth.
+
 - 2026-09-21: STEP7-RELEASE-01 COMPLETED — entire 7-step Vantrilex-Orca
   migration roadmap certified. Hardening commit (CSP build-time meta
   plugin, modulePreload polyfill off, packaged-asar verifier, secrets
