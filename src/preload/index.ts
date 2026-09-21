@@ -11,6 +11,7 @@ import { wslApi } from './api/wsl-bridge'
 import { pwshApi } from './api/pwsh-bridge'
 import { gitBashApi } from './api/git-bash-bridge'
 import { pluginsApi } from './api/plugins-bridge'
+import { agentApi } from './api/agent-bridge'
 import { foundryApi } from './api/foundry-bridge'
 import { relayApi } from './api/relay-bridge'
 import { runnerTerminalApi } from './api/runner-terminal-bridge'
@@ -109,6 +110,7 @@ const api = {
   pwsh: pwshApi,
   gitBash: gitBashApi,
   plugins: pluginsApi,
+  agent: agentApi,
   foundry: foundryApi,
   runnerTerminal: runnerTerminalApi,
   voice: voiceApi,

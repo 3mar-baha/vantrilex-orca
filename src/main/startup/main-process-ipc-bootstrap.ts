@@ -1,20 +1,16 @@
-import { BrowserWindow, app, ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import { statSync } from 'node:fs'
-import { join } from 'node:path'
 import { registerFoundryIpcHandlers } from '../foundry/foundry-ipc'
 import { MobileRelay } from '../mobile-relay/relay-server'
 import { registerRelayIpc, relayServiceFrom } from '../mobile-relay/relay-ipc'
-import { AmmaniBrain } from '../voice/brain'
-import { DpapiStore } from '../voice/dpapi-store'
-import { GroqStt } from '../voice/stt'
-import { FishTts } from '../voice/tts'
-import { Keyring } from '../voice/keyring'
-import { createVoiceService, registerVoiceIpc } from '../voice/voice-ipc'
-import {
-  createTerminalManager,
-  registerTerminalIpc,
-  type SessionEvent
-} from '../terminal/terminal-ipc'
+import { registerVoiceIpc } from '../voice/voice-ipc'
+import { createVoiceStack } from '../voice/voice-service'
+import { registerAgentIpc } from '../agent/agent-ipc'
+import { briefConclusion } from '../agent/briefing'
+import { orchestrateDirective, readWorkspaceState } from '../agent/prompt-orchestrator'
+import { TerminalWatcher, type SessionEvent } from '../agent/terminal-watcher'
+import { handleRunnerInject } from '../terminal/terminal-handlers'
+import { createTerminalManager, registerTerminalIpc } from '../terminal/terminal-ipc'
 import { recoverLegacyWorkerTerminalsForRendererStartup } from './legacy-worker-renderer-recovery'
 import { logStartupMilestone } from './startup-diagnostics'
 import { mainProcessState as state } from './main-process-state'
@@ -41,20 +37,39 @@ function broadcastSessionEvent(event: SessionEvent): void {
   }
 }
 
-function registerTerminalIpcHandlers(): void {
-  const deps = createTerminalManager(broadcastSessionEvent, isWorkspaceDir)
-  registerTerminalIpc(ipcMain, deps)
-}
-
-function registerVoiceIpcHandlers(): void {
-  const file = join(app.getPath('userData'), 'vantrilex', 'keyring.json')
-  const keyring = new Keyring(new DpapiStore(file))
-  const service = createVoiceService({
-    tts: new FishTts({ keyring }),
-    stt: new GroqStt({ keyring }),
-    brain: new AmmaniBrain({ keyring })
+function registerTerminalVoiceAndAgentIpcHandlers(): void {
+  const stack = createVoiceStack()
+  registerVoiceIpc(ipcMain, stack.service)
+  let ambientArmed = true
+  const watcher = new TerminalWatcher((conclusion) => {
+    void briefConclusion({ brain: stack.brain, tts: stack.tts }, conclusion, {
+      armed: ambientArmed,
+      voice: 'male'
+    })
   })
-  registerVoiceIpc(ipcMain, service)
+  const hookEmit = (event: SessionEvent): void => {
+    broadcastSessionEvent(event)
+    watcher.observe(event)
+  }
+  const termDeps = createTerminalManager(hookEmit, isWorkspaceDir)
+  registerTerminalIpc(ipcMain, termDeps)
+  registerAgentIpc(ipcMain, {
+    orchestrate: (directive, workspace) =>
+      orchestrateDirective(
+        {
+          brain: stack.brain,
+          readProjectState: readWorkspaceState,
+          inject: async (prompt) => handleRunnerInject(termDeps, { prompt }),
+          rearm: (sessionId) => watcher.resetSession(sessionId)
+        },
+        directive,
+        workspace
+      ),
+    setArmed: async (armed) => {
+      ambientArmed = armed
+    },
+    status: () => ({ armed: ambientArmed, pending: watcher.pendingCount() })
+  })
 }
 
 function registerRelayIpcHandlers(): void {
@@ -71,8 +86,7 @@ function registerRelayIpcHandlers(): void {
 
 export function registerMainProcessIpcHandlers(): void {
   registerFoundryIpcHandlers()
-  registerTerminalIpcHandlers()
-  registerVoiceIpcHandlers()
+  registerTerminalVoiceAndAgentIpcHandlers()
   registerRelayIpcHandlers()
   ipcMain.handle('app:awaitFirstWindowStartupServices', async () => {
     await Promise.all([

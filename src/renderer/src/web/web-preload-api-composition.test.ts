@@ -71,6 +71,7 @@ describe('web preload API composition', () => {
       'pwsh',
       'gitBash',
       'agentStatus',
+      'agent',
       'foundry',
       'runnerTerminal',
       'voice',

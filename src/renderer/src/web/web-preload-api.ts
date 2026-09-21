@@ -44,6 +44,7 @@ import { webRuntimeState } from './preload-api/web-runtime-session'
 import { createWebSettingsApi } from './preload-api/web-settings-api'
 import { createShellApi } from './preload-api/web-shell-api'
 import { createWebStarNagApi } from './preload-api/web-star-nag-api'
+import { createWebAgentApi } from './preload-api/web-agent-api'
 import { createWebFoundryApi } from './preload-api/web-foundry-api'
 import { createWebRelayApi } from './preload-api/web-relay-api'
 import { createWebRunnerTerminalApi } from './preload-api/web-runner-terminal-api'
@@ -137,6 +138,7 @@ function createWebPreloadApi(): Partial<PreloadApi> {
       isAvailable: () => callRuntimeResult<boolean>('host.gitBash.isAvailable').catch(() => false)
     },
     ...createWebAgentStatusApi(),
+    ...createWebAgentApi(),
     ...createWebFoundryApi(),
     ...createWebRunnerTerminalApi(),
     ...createWebVoiceApi(),

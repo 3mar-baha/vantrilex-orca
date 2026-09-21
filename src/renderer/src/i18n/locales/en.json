@@ -3818,7 +3818,10 @@
               "pairingTip": "Pair a mobile device — scan the QR to approve runner steps remotely.",
               "pairingClose": "Close",
               "pairingRegenerate": "Regenerate",
-              "pairingExpired": "Code expired"
+              "pairingExpired": "Code expired",
+              "ambientToggleLabel": "Toggle ambient briefings",
+              "ambientTipArmed": "Ambient briefings armed — runner conclusions are spoken. Click to mute (watcher keeps recording).",
+              "ambientTipMuted": "Ambient briefings muted — click to arm spoken task briefings."
             },
             "codexSignInSuccess": "Signed in to Codex",
             "codexSignInError": "Codex sign-in failed. Please try again."

@@ -31,6 +31,7 @@ import { useStatusBarController } from './use-status-bar-controller'
 import { StatusBarVisibilityMenu } from './StatusBarVisibilityMenu'
 import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
 import { useActiveRepo } from '../../store/selectors'
+import { AmbientToggle } from '../voice/AmbientToggle'
 import { MicToggle } from '../voice/MicToggle'
 import { VoiceSelector } from '../voice/VoiceSelector'
 import { micBridge, voiceLoop, voiceStore } from '../voice/voice-ui-state'
@@ -257,6 +258,7 @@ export function StatusBarSurface({
         <RemoteServerUpdateStatusSegment iconOnly={iconOnly} />
         <SkillUpdateStatusSegment iconOnly={iconOnly} />
         <UpdateStatusSegment compact={compact} iconOnly={iconOnly} />
+        <AmbientToggle bridge={window.api.agent} />
         <MicToggle
           bridge={micBridge}
           iconOnly={iconOnly}
