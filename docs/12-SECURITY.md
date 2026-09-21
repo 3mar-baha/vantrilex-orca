@@ -22,6 +22,18 @@ New trust boundaries are recorded here before code crosses them.
 | Child processes (Step 5) | `runProcess`/`spawnProcess` wrappers; never bare `child_process`; never `shell: true`; `.cmd` shim resolution | `src/shared/child-process/` |
 | OTA/mobile relay (Step 6) | Self-hosted relay; QR-paired approval tokens, single-use, expiring | `vendor/happy/` |
 
+### Content Security Policy (production)
+
+Packaged renderer entries ship a strict CSP meta tag injected at build
+time by `config/build-plugins/production-csp-meta.ts` (`apply: 'build'`,
+so dev HMR is untouched). Policy: `default-src 'self'`, `script-src
+'self'` (modulePreload polyfill disabled — shipped Chromium supports it
+natively), `style-src 'self' 'unsafe-inline'` (React/xterm/Tailwind
+runtime styles), media/img blob+data (TTS clips, avatars),
+`object-src 'none'`, `frame-ancestors 'none'`. Provider traffic (Fish
+Audio, Groq) runs in main over Node fetch, so renderer `connect-src`
+stays `'self'`.
+
 ### Secrets policy
 
 Zero plaintext secrets: no key values in docs, logs, screenshots,

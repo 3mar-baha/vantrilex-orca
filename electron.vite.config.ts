@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { createBootstrapFatalExitBanner } from './config/build-plugins/bootstrap-fatal-exit-banner'
 import { createPdfjsViewerAssetsPlugin } from './config/build-plugins/pdfjs-viewer-assets'
 import { createPlainNodeEntryGuardPlugin } from './config/build-plugins/plain-node-entry-guard'
+import { createProductionCspMetaPlugin } from './config/build-plugins/production-csp-meta'
 import packageJson from './package.json' with { type: 'json' }
 
 const BUNDLED_MAIN_DEPENDENCIES = new Set([
@@ -308,13 +309,21 @@ export const electronViteConfig: UserConfig = {
         '@': resolve('src/renderer/src')
       }
     },
-    plugins: [react(), tailwindcss(), createPdfjsViewerAssetsPlugin()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      createPdfjsViewerAssetsPlugin(),
+      createProductionCspMetaPlugin()
+    ],
     worker: {
       format: 'es'
     },
     build: {
       manifest: true,
-      modulePreload: { polyfill: true },
+      // Why object form: the modulePreload polyfill inlines a script tag,
+      // which the production CSP (script-src 'self', no unsafe-inline)
+      // would block. The shipped Chromium supports modulepreload natively.
+      modulePreload: { polyfill: false },
       minify: 'oxc',
       target: 'es2020',
       // Why: the pop-out dashboard is a second top-level window with its own
