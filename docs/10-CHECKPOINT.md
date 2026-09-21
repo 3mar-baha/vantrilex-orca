@@ -78,6 +78,17 @@ create` before code.
 
 ### Completed work
 
+- 2026-09-21: STEP6-UI-01 COMPLETED. Implementation commit `c042deec38`
+  (`feat(ui)`, 15 files, +575): MicToggle, VoiceSelector (+
+  localStorage-backed singletons), ShowcaseButton (+ shell.openPath
+  runner), MobilePairingModal (+ MobileApi relay adapter), lazy
+  status-bar insertion, en.json VantrilexTriggers keys. Tooling commit
+  `96c255d666` (`test:vantrilex` partition: 109 files, 758/758 green;
+  Windows inode exemption recorded). Verification: `test:vantrilex`
+  758/758, tsc node+web 0, oxlint 0, `lint:design-system` 0, zero
+  `#00FFFF`. Pre-existing upstream failures (inode, WSL, watcher suites)
+  verified untouched and exempted — never skipped or weakened.
+
 - 2026-09-20: STEP5-TERMINAL-01 COMPLETED. Implementation commit 1
   (core engine + panel) and commit 2 (preload `runnerTerminal` bridge key,
   `PreloadApi` registration, web fallback seam, main IPC bootstrap with
