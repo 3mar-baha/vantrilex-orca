@@ -37,6 +37,8 @@ export default defineConfig({
       'tests/voice/**/*.test.ts',
       'tests/terminal/**/*.test.ts',
       'tests/terminal/**/*.test.tsx',
+      'tests/ui/**/*.test.ts',
+      'tests/ui/**/*.test.tsx',
       'tests/e2e/**/*.unit.test.ts'
     ],
     // Why: the full suite runs heavy TS transforms plus real git/http fixtures;

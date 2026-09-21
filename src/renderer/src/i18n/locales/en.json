@@ -3804,6 +3804,17 @@
             "grokUsageAria": "Open Grok usage details",
             "grokUsageMenu": "Grok Usage",
             "floatingTerminalNewActivity": "{{label}}, new activity",
+            "VantrilexTriggers": {
+              "micToggleLabel": "Toggle voice input",
+              "voiceLabel": "Voice",
+              "voiceMale": "Male",
+              "voiceFemale": "Female",
+              "showcaseOpen": "Open project showcase",
+              "pairingTitle": "Pair mobile device",
+              "pairingClose": "Close",
+              "pairingRegenerate": "Regenerate",
+              "pairingExpired": "Code expired"
+            },
             "codexSignInSuccess": "Signed in to Codex",
             "codexSignInError": "Codex sign-in failed. Please try again."
           },

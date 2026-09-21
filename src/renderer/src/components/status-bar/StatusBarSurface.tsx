@@ -1,5 +1,5 @@
 import { PanelsTopLeft, RefreshCw } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 import { lazyWithRetry } from '@/lib/lazy-with-retry'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {
@@ -30,6 +30,14 @@ import { ProviderLetterBadge, ProviderSegment } from './StatusBarProviderSegment
 import { useStatusBarController } from './use-status-bar-controller'
 import { StatusBarVisibilityMenu } from './StatusBarVisibilityMenu'
 import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
+import { useActiveRepo } from '../../store/selectors'
+import { MicToggle } from '../voice/MicToggle'
+import { VoiceSelector } from '../voice/VoiceSelector'
+import { micBridge, voiceStore } from '../voice/voice-ui-state'
+import { ShowcaseButton } from '../showcase/ShowcaseButton'
+import { createShowcaseRunner } from '../showcase/showcase-runner'
+import { MobilePairingModal } from '../mobile/MobilePairingModal'
+import { createMobileRelay } from '../mobile/mobile-relay'
 
 const PetStatusSegment = lazyWithRetry(() =>
   import('./PetStatusSegment').then((module) => ({ default: module.PetStatusSegment }))
@@ -54,6 +62,8 @@ export function StatusBarSurface({
   floatingTerminalOpen
 }: StatusBarProps): React.JSX.Element | null {
   const controller = useStatusBarController(floatingTerminalOpen)
+  const activeRepo = useActiveRepo()
+  const [pairingOpen, setPairingOpen] = useState(false)
   if (!controller) {
     return null
   }
@@ -247,6 +257,28 @@ export function StatusBarSurface({
         <RemoteServerUpdateStatusSegment iconOnly={iconOnly} />
         <SkillUpdateStatusSegment iconOnly={iconOnly} />
         <UpdateStatusSegment compact={compact} iconOnly={iconOnly} />
+        <MicToggle bridge={micBridge} iconOnly={iconOnly} />
+        <ShowcaseButton runner={createShowcaseRunner(activeRepo?.path ?? null, window.api.shell)} />
+        <VoiceSelector store={voiceStore} />
+        <button
+          data-testid="pairing-trigger"
+          type="button"
+          aria-label={translate(
+            'auto.components.status.bar.VantrilexTriggers.pairingTitle',
+            'Pair mobile device'
+          )}
+          className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+          onClick={() => setPairingOpen(true)}
+        >
+          ⌁
+        </button>
+        {pairingOpen ? (
+          <MobilePairingModal
+            relay={createMobileRelay(window.api.mobile)}
+            open
+            onClose={() => setPairingOpen(false)}
+          />
+        ) : null}
         <React.Suspense fallback={null}>
           {petEnabled ? <PetStatusSegment /> : null}
           {showResourceUsage ? (
