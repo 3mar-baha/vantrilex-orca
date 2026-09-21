@@ -1,5 +1,6 @@
 import type React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import crestIconUrl from '../../../../shared/vantrilex-assets/vantrilex-crest.png?url'
 import classicIconUrl from '../../../../../resources/icon.png?url'
 import watercolorIconUrl from '../../../../../resources/app-icons/orca-watercolor.png?url'
 import blueIconUrl from '../../../../../resources/app-icons/orca-blue.png?url'
@@ -9,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { translate } from '@/i18n/i18n'
 
 const APP_ICON_URLS = {
+  vantrilex: crestIconUrl,
   classic: classicIconUrl,
   watercolor: watercolorIconUrl,
   blue: blueIconUrl

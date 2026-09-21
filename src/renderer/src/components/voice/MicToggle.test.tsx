@@ -2,6 +2,7 @@
 
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { MicToggle, type MicBridge } from './MicToggle'
 
 function fakeBridge(armed = false): MicBridge & { calls: boolean[] } {
@@ -21,14 +22,22 @@ afterEach(() => {
 
 describe('mic toggle', () => {
   it('renders the armed state from the bridge', () => {
-    render(<MicToggle bridge={fakeBridge(true)} />)
+    render(
+      <TooltipProvider>
+        <MicToggle bridge={fakeBridge(true)} />
+      </TooltipProvider>
+    )
     expect(screen.getByTestId('mic-toggle').getAttribute('aria-pressed')).toBe('true')
   })
 
   it('disarms on click through the bridge', async () => {
     const bridge = fakeBridge(true)
     const setArmed = vi.spyOn(bridge, 'setArmed')
-    render(<MicToggle bridge={bridge} />)
+    render(
+      <TooltipProvider>
+        <MicToggle bridge={bridge} />
+      </TooltipProvider>
+    )
     screen.getByTestId('mic-toggle').click()
     await vi.waitFor(() => {
       expect(setArmed).toHaveBeenCalledWith(false)
@@ -39,7 +48,11 @@ describe('mic toggle', () => {
   })
 
   it('hides the label in icon-only mode', () => {
-    render(<MicToggle bridge={fakeBridge(false)} iconOnly />)
+    render(
+      <TooltipProvider>
+        <MicToggle bridge={fakeBridge(false)} iconOnly />
+      </TooltipProvider>
+    )
     expect(screen.queryByTestId('mic-toggle-label')).toBeNull()
     expect(screen.getByTestId('mic-toggle')).toBeTruthy()
   })

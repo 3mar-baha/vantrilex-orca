@@ -1,4 +1,4 @@
-import { PanelsTopLeft, RefreshCw } from 'lucide-react'
+import { PanelsTopLeft, RefreshCw, Smartphone } from 'lucide-react'
 import React, { useState } from 'react'
 import { lazyWithRetry } from '@/lib/lazy-with-retry'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -268,18 +268,30 @@ export function StatusBarSurface({
           injector={{ inject: (prompt) => window.api.runnerTerminal.inject(prompt) }}
         />
         <VoiceSelector store={voiceStore} />
-        <button
-          data-testid="pairing-trigger"
-          type="button"
-          aria-label={translate(
-            'auto.components.status.bar.VantrilexTriggers.pairingTitle',
-            'Pair mobile device'
-          )}
-          className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-          onClick={() => setPairingOpen(true)}
-        >
-          ⌁
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              data-testid="pairing-trigger"
+              type="button"
+              aria-label={translate(
+                'auto.components.status.bar.VantrilexTriggers.pairingTitle',
+                'Pair mobile device'
+              )}
+              className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setPairingOpen(true)}
+            >
+              <span aria-hidden>
+                <Smartphone size={12} />
+              </span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={6}>
+            {translate(
+              'auto.components.status.bar.VantrilexTriggers.pairingTip',
+              'Pair a mobile device — scan the QR to approve runner steps remotely.'
+            )}
+          </TooltipContent>
+        </Tooltip>
         {pairingOpen ? (
           <MobilePairingModal
             relay={createMobileRelay(window.api.relay)}

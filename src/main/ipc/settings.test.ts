@@ -802,9 +802,9 @@ describe('registerSettingsHandlers', () => {
     expect(applyAppIconMock).toHaveBeenCalledWith('watercolor')
   })
 
-  it('falls back to the classic app icon for invalid renderer settings IPC values', async () => {
+  it('falls back to the vantrilex app icon for invalid renderer settings IPC values', async () => {
     store.getSettings.mockReturnValue({ appIcon: 'watercolor' })
-    store.updateSettings.mockReturnValue({ appIcon: 'classic' })
+    store.updateSettings.mockReturnValue({ appIcon: 'vantrilex' })
     registerSettingsHandlers(store as never)
 
     const handler = handleMock.mock.calls.find((call) => call[0] === 'settings:set')?.[1] as (
@@ -815,10 +815,10 @@ describe('registerSettingsHandlers', () => {
     await handler(settingsInvokeEvent, { appIcon: 'not-real' })
 
     expect(store.updateSettings).toHaveBeenCalledWith(
-      { appIcon: 'classic' },
+      { appIcon: 'vantrilex' },
       { notifyListeners: true, originWebContentsId: 1 }
     )
-    expect(applyAppIconMock).toHaveBeenCalledWith('classic')
+    expect(applyAppIconMock).toHaveBeenCalledWith('vantrilex')
   })
 
   it('rebuilds the app menu after Automations sidebar visibility changes', async () => {

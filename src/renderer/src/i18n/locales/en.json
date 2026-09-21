@@ -3806,11 +3806,16 @@
             "floatingTerminalNewActivity": "{{label}}, new activity",
             "VantrilexTriggers": {
               "micToggleLabel": "Toggle voice input",
+              "micTipArmed": "Voice input armed ({voice} voice) — click to disarm. Captures mic, thinks, speaks the reply.",
+              "micTipDisarmed": "Voice input off — click to arm microphone capture.",
               "voiceLabel": "Voice",
               "voiceMale": "Male",
               "voiceFemale": "Female",
+              "voiceTip": "Spoken reply voice ({voice}) — persisted across sessions.",
               "showcaseOpen": "Open project showcase",
+              "showcaseTip": "Project showcase — click to open, Shift+Click to regenerate it in the active runner.",
               "pairingTitle": "Pair mobile device",
+              "pairingTip": "Pair a mobile device — scan the QR to approve runner steps remotely.",
               "pairingClose": "Close",
               "pairingRegenerate": "Regenerate",
               "pairingExpired": "Code expired"

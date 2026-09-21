@@ -1,4 +1,5 @@
 export const APP_ICON_OPTIONS = [
+  { id: 'vantrilex', label: 'Vantrilex Crest' },
   { id: 'classic', label: 'Classic Orca' },
   { id: 'watercolor', label: 'Watercolor Orca' },
   { id: 'blue', label: 'Blue Orca' }
@@ -6,7 +7,7 @@ export const APP_ICON_OPTIONS = [
 
 export type AppIconId = (typeof APP_ICON_OPTIONS)[number]['id']
 
-export const DEFAULT_APP_ICON_ID: AppIconId = 'classic'
+export const DEFAULT_APP_ICON_ID: AppIconId = 'vantrilex'
 
 export function normalizeAppIconId(value: unknown): AppIconId {
   return APP_ICON_OPTIONS.some((option) => option.id === value)

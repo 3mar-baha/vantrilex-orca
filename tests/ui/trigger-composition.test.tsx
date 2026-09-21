@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { MicToggle } from '../../src/renderer/src/components/voice/MicToggle'
 import { VoiceSelector } from '../../src/renderer/src/components/voice/VoiceSelector'
 import { ShowcaseButton } from '../../src/renderer/src/components/showcase/ShowcaseButton'
@@ -16,16 +17,18 @@ afterEach(() => {
 describe('trigger composition', () => {
   it('mounts the four triggers in order inside a status-bar-height row', () => {
     render(
-      <div data-testid="trigger-row" className="flex h-6 min-h-[24px] items-center gap-3">
-        <MicToggle bridge={{ getArmed: () => false, setArmed: async () => {} }} iconOnly />
-        <ShowcaseButton runner={{ generate: async () => ({ path: 'docs/showcase.html' }) }} />
-        <VoiceSelector store={{ getVoice: () => 'male' as const, setVoice: async () => {} }} />
-        <MobilePairingModal
-          relay={{ createNonce: async () => ({ qr: '', expiresAt: 0 }) }}
-          open={false}
-          onClose={() => {}}
-        />
-      </div>
+      <TooltipProvider>
+        <div data-testid="trigger-row" className="flex h-6 min-h-[24px] items-center gap-3">
+          <MicToggle bridge={{ getArmed: () => false, setArmed: async () => {} }} iconOnly />
+          <ShowcaseButton runner={{ generate: async () => ({ path: 'docs/showcase.html' }) }} />
+          <VoiceSelector store={{ getVoice: () => 'male' as const, setVoice: async () => {} }} />
+          <MobilePairingModal
+            relay={{ createNonce: async () => ({ qr: '', expiresAt: 0 }) }}
+            open={false}
+            onClose={() => {}}
+          />
+        </div>
+      </TooltipProvider>
     )
     const row = screen.getByTestId('trigger-row')
     const order = [...row.querySelectorAll('[data-testid]')]

@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { LayoutTemplate } from 'lucide-react'
 import { translate } from '@/i18n/i18n'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { SHOWCASE_GENERATION_PROMPT } from './showcase-prompt'
 
 export type ShowcaseRunner = {
@@ -52,25 +54,37 @@ export function ShowcaseButton({
 
   return (
     <span className="inline-flex items-center gap-1">
-      <button
-        data-testid="showcase-button"
-        type="button"
-        disabled={busy}
-        aria-label={translate(
-          'auto.components.status.bar.VantrilexTriggers.showcaseOpen',
-          'Open project showcase'
-        )}
-        className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
-        onClick={(event) => {
-          if (event.shiftKey) {
-            void inject()
-          } else {
-            void generate()
-          }
-        }}
-      >
-        ★
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            data-testid="showcase-button"
+            type="button"
+            disabled={busy}
+            aria-label={translate(
+              'auto.components.status.bar.VantrilexTriggers.showcaseOpen',
+              'Open project showcase'
+            )}
+            className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
+            onClick={(event) => {
+              if (event.shiftKey) {
+                void inject()
+              } else {
+                void generate()
+              }
+            }}
+          >
+            <span aria-hidden>
+              <LayoutTemplate size={12} />
+            </span>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" sideOffset={6}>
+          {translate(
+            'auto.components.status.bar.VantrilexTriggers.showcaseTip',
+            'Project showcase — click to open, Shift+Click to regenerate it in the active runner.'
+          )}
+        </TooltipContent>
+      </Tooltip>
       {status ? <span data-testid="showcase-status">{status}</span> : null}
     </span>
   )

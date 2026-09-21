@@ -2,6 +2,7 @@
 
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { ShowcaseButton } from './ShowcaseButton'
 
 afterEach(() => {
@@ -11,7 +12,11 @@ afterEach(() => {
 describe('showcase button', () => {
   it('generates and reports the showcase path on click', async () => {
     const generate = vi.fn(async () => ({ path: 'docs/showcase.html' }))
-    render(<ShowcaseButton runner={{ generate }} />)
+    render(
+      <TooltipProvider>
+        <ShowcaseButton runner={{ generate }} />
+      </TooltipProvider>
+    )
     screen.getByTestId('showcase-button').click()
     await vi.waitFor(() => {
       expect(generate).toHaveBeenCalledTimes(1)
@@ -25,7 +30,11 @@ describe('showcase button', () => {
     const generate = vi.fn(async () => {
       throw new Error('skill unavailable')
     })
-    render(<ShowcaseButton runner={{ generate }} />)
+    render(
+      <TooltipProvider>
+        <ShowcaseButton runner={{ generate }} />
+      </TooltipProvider>
+    )
     screen.getByTestId('showcase-button').click()
     await vi.waitFor(() => {
       expect(screen.getByTestId('showcase-status').textContent).toMatch(/unavailable/i)

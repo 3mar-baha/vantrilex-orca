@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, MoreHorizontal, PanelLeft } from 'lucide-react'
-import logo from '../../../../resources/logo.svg'
+import crestUrl from '../../../shared/vantrilex-assets/vantrilex-crest.png?url'
 import { translate } from '@/i18n/i18n'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {
@@ -47,7 +47,7 @@ export function TitlebarLeftControls({ layout }: { layout: AppChromeLayout }): R
         ) : hasCustomTitleBar ? (
           /* Why: Windows/Linux remove the native title bar, so render the logo plus a ··· button that pops the application menu (as Alt does). */
           <>
-            <img src={logo} alt="" aria-hidden className="titlebar-logo" />
+            <img src={crestUrl} alt="" aria-hidden className="titlebar-logo titlebar-crest" />
             <Tooltip>
               <TooltipTrigger asChild>
                 <button

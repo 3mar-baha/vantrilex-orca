@@ -2,6 +2,7 @@
 
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { VoiceSelector, type VoiceChoice, type VoiceStore } from './VoiceSelector'
 
 function fakeStore(saved: VoiceChoice = 'male'): VoiceStore & { saved: VoiceChoice[] } {
@@ -21,14 +22,22 @@ afterEach(() => {
 
 describe('voice selector', () => {
   it('selects the stored voice by default', () => {
-    render(<VoiceSelector store={fakeStore('female')} />)
+    render(
+      <TooltipProvider>
+        <VoiceSelector store={fakeStore('female')} />
+      </TooltipProvider>
+    )
     expect((screen.getByTestId('voice-selector') as HTMLSelectElement).value).toBe('female')
   })
 
   it('persists voice changes through the store', async () => {
     const store = fakeStore('male')
     const setVoice = vi.spyOn(store, 'setVoice')
-    render(<VoiceSelector store={store} />)
+    render(
+      <TooltipProvider>
+        <VoiceSelector store={store} />
+      </TooltipProvider>
+    )
     const select = screen.getByTestId('voice-selector') as HTMLSelectElement
     select.value = 'female'
     select.dispatchEvent(new Event('change', { bubbles: true }))

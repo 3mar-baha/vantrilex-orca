@@ -75,7 +75,7 @@ describe('Store', () => {
     expect(settings.refreshLocalBaseRefOnWorktreeCreate).toBe(false)
     expect(settings.sourceControlGroupOrder).toBe('changes-first')
     expect(settings.theme).toBe('system')
-    expect(settings.appIcon).toBe('classic')
+    expect(settings.appIcon).toBe('vantrilex')
     expect(settings.appFontFamily).toBe('Geist')
     expect(settings.editorAutoSave).toBe(false)
     expect(settings.editorAutoSaveDelayMs).toBe(1000)

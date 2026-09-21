@@ -6,6 +6,8 @@ import {
 import { dirname, resolve } from 'node:path'
 import { app, BrowserWindow, nativeImage } from 'electron'
 import { is } from '@electron-toolkit/utils'
+import crestIcon from '../shared/vantrilex-assets/vantrilex-crest.png?asset'
+import crestMacDockIcon from '../shared/vantrilex-assets/vantrilex-crest.png?asset&asarUnpack'
 import classicIcon from '../../resources/icon.png?asset'
 import classicDevIcon from '../../resources/icon-dev.png?asset'
 import watercolorIcon from '../../resources/app-icons/orca-watercolor.png?asset'
@@ -15,12 +17,14 @@ import blueMacDockIcon from '../../resources/app-icons/orca-blue.png?asset&asarU
 import { normalizeAppIconId, type AppIconId } from '../shared/app-icon'
 
 const APP_ICON_PATHS = {
+  vantrilex: crestIcon,
   classic: is.dev ? classicDevIcon : classicIcon,
   watercolor: watercolorIcon,
   blue: blueIcon
 } satisfies Record<AppIconId, string>
 
 const MAC_DOCK_ICON_PATHS = {
+  vantrilex: crestMacDockIcon,
   watercolor: watercolorMacDockIcon,
   blue: blueMacDockIcon
 } satisfies Record<Exclude<AppIconId, 'classic'>, string>

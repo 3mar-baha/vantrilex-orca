@@ -528,11 +528,11 @@ describe('Store', () => {
     )
     const store = await createStore()
 
-    expect(store.getSettings().appIcon).toBe('classic')
+    expect(store.getSettings().appIcon).toBe('vantrilex')
 
     expect(store.updateSettings({ appIcon: 'watercolor' }).appIcon).toBe('watercolor')
     expect(store.updateSettings({ appIcon: 'blue' }).appIcon).toBe('blue')
-    expect(store.updateSettings({ appIcon: 'not-real' as never }).appIcon).toBe('classic')
+    expect(store.updateSettings({ appIcon: 'not-real' as never }).appIcon).toBe('vantrilex')
   })
 
   it('updateSettings keeps the legacy commit-message AI projection in sync', async () => {

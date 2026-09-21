@@ -2,6 +2,7 @@
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { ShowcaseButton } from './ShowcaseButton'
 import { SHOWCASE_GENERATION_PROMPT } from './showcase-prompt'
 
@@ -22,7 +23,11 @@ describe('showcase shift-click injection', () => {
   it('injects the generation prompt on shift-click', async () => {
     const inject = vi.fn(async () => ({ sessionId: 'session-1' }))
     const generate = vi.fn(async () => ({ path: 'docs/showcase.html' }))
-    render(<ShowcaseButton runner={{ generate }} injector={{ inject }} />)
+    render(
+      <TooltipProvider>
+        <ShowcaseButton runner={{ generate }} injector={{ inject }} />
+      </TooltipProvider>
+    )
     fireEvent.click(screen.getByTestId('showcase-button'), { shiftKey: true })
     await vi.waitFor(() => {
       expect(inject).toHaveBeenCalledWith(SHOWCASE_GENERATION_PROMPT)
@@ -36,7 +41,11 @@ describe('showcase shift-click injection', () => {
   it('opens the preview on plain click', async () => {
     const inject = vi.fn(async () => ({ sessionId: 'session-1' }))
     const generate = vi.fn(async () => ({ path: 'docs/showcase.html' }))
-    render(<ShowcaseButton runner={{ generate }} injector={{ inject }} />)
+    render(
+      <TooltipProvider>
+        <ShowcaseButton runner={{ generate }} injector={{ inject }} />
+      </TooltipProvider>
+    )
     fireEvent.click(screen.getByTestId('showcase-button'), { shiftKey: false })
     await vi.waitFor(() => {
       expect(generate).toHaveBeenCalledTimes(1)
@@ -49,7 +58,9 @@ describe('showcase shift-click injection', () => {
       throw new Error('No active runner session')
     })
     render(
-      <ShowcaseButton runner={{ generate: async () => ({ path: 'x' }) }} injector={{ inject }} />
+      <TooltipProvider>
+        <ShowcaseButton runner={{ generate: async () => ({ path: 'x' }) }} injector={{ inject }} />
+      </TooltipProvider>
     )
     fireEvent.click(screen.getByTestId('showcase-button'), { shiftKey: true })
     await vi.waitFor(() => {

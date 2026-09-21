@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
+import { Mic, MicOff } from 'lucide-react'
 import { translate } from '@/i18n/i18n'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { VoiceChoice } from './VoiceSelector'
 
 export type MicBridge = {
@@ -133,24 +135,40 @@ export function MicToggle({
 
   return (
     <span className="inline-flex items-center gap-1">
-      <button
-        data-testid="mic-toggle"
-        type="button"
-        aria-pressed={armed}
-        aria-label={translate(
-          'auto.components.status.bar.VantrilexTriggers.micToggleLabel',
-          armed ? 'Disarm voice input' : 'Arm voice input'
-        )}
-        className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-        onClick={() => {
-          void toggle()
-        }}
-      >
-        <span aria-hidden>{armed ? '🎙' : '🎙̶'}</span>
-        {iconOnly ? null : (
-          <span data-testid="mic-toggle-label">{armed ? 'Mic on' : 'Mic off'}</span>
-        )}
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            data-testid="mic-toggle"
+            type="button"
+            aria-pressed={armed}
+            aria-label={translate(
+              'auto.components.status.bar.VantrilexTriggers.micToggleLabel',
+              armed ? 'Disarm voice input' : 'Arm voice input'
+            )}
+            className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => {
+              void toggle()
+            }}
+          >
+            <span aria-hidden>{armed ? <Mic size={12} /> : <MicOff size={12} />}</span>
+            {iconOnly ? null : (
+              <span data-testid="mic-toggle-label">{armed ? 'Mic on' : 'Mic off'}</span>
+            )}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" sideOffset={6}>
+          {armed
+            ? translate(
+                'auto.components.status.bar.VantrilexTriggers.micTipArmed',
+                'Voice input armed ({voice} voice) — click to disarm. Captures mic, thinks, speaks the reply.',
+                { voice }
+              )
+            : translate(
+                'auto.components.status.bar.VantrilexTriggers.micTipDisarmed',
+                'Voice input off — click to arm microphone capture.'
+              )}
+        </TooltipContent>
+      </Tooltip>
       {status ? <span data-testid="voice-status">{status}</span> : null}
     </span>
   )

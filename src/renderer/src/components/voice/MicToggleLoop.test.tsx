@@ -2,6 +2,7 @@
 
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { MicToggle, type VoiceLoop } from './MicToggle'
 
 class FakeRecorder {
@@ -57,19 +58,21 @@ describe('mic voice loop', () => {
     const played: string[] = []
     let recorder: FakeRecorder | null = null
     render(
-      <MicToggle
-        bridge={bridge}
-        loop={fakeLoop(sent)}
-        voice="female"
-        createRecorder={(stream) => {
-          recorder = new FakeRecorder(stream)
-          return recorder as unknown as MediaRecorder
-        }}
-        createAudio={(url) => {
-          played.push(url)
-          return { play: async () => {} }
-        }}
-      />
+      <TooltipProvider>
+        <MicToggle
+          bridge={bridge}
+          loop={fakeLoop(sent)}
+          voice="female"
+          createRecorder={(stream) => {
+            recorder = new FakeRecorder(stream)
+            return recorder as unknown as MediaRecorder
+          }}
+          createAudio={(url) => {
+            played.push(url)
+            return { play: async () => {} }
+          }}
+        />
+      </TooltipProvider>
     )
     screen.getByTestId('mic-toggle').click()
     await vi.waitFor(() => {
@@ -90,13 +93,15 @@ describe('mic voice loop', () => {
     const delivered: string[] = []
     const sent: string[] = []
     render(
-      <MicToggle
-        bridge={bridge}
-        loop={fakeLoop(sent)}
-        terminal={{ send: async (input: string) => void delivered.push(input) }}
-        createRecorder={(stream) => new FakeRecorder(stream) as unknown as MediaRecorder}
-        createAudio={() => ({ play: async () => {} })}
-      />
+      <TooltipProvider>
+        <MicToggle
+          bridge={bridge}
+          loop={fakeLoop(sent)}
+          terminal={{ send: async (input: string) => void delivered.push(input) }}
+          createRecorder={(stream) => new FakeRecorder(stream) as unknown as MediaRecorder}
+          createAudio={() => ({ play: async () => {} })}
+        />
+      </TooltipProvider>
     )
     screen.getByTestId('mic-toggle').click()
     await new Promise((resolve) => setTimeout(resolve, 10))
@@ -116,11 +121,13 @@ describe('mic voice loop', () => {
       configurable: true
     })
     render(
-      <MicToggle
-        bridge={bridge}
-        loop={fakeLoop([])}
-        createAudio={() => ({ play: async () => {} })}
-      />
+      <TooltipProvider>
+        <MicToggle
+          bridge={bridge}
+          loop={fakeLoop([])}
+          createAudio={() => ({ play: async () => {} })}
+        />
+      </TooltipProvider>
     )
     screen.getByTestId('mic-toggle').click()
     await vi.waitFor(() => {

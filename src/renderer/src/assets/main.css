@@ -881,6 +881,18 @@ html.native-shell .app-layout {
   filter: invert(1);
 }
 
+/* Why: the owner crest is a full-color emblem, unlike the monochrome Orca
+   SVG — never invert it, and render it circular so the square PNG reads as
+   a badge in the 36px titlebar. */
+.titlebar-crest {
+  width: 16px;
+  border-radius: 9999px;
+  opacity: 1;
+}
+:root:not(.dark) .titlebar-crest {
+  filter: none;
+}
+
 /* Why: desktop custom title bar buttons replace hidden native OS chrome.
    Anchored to the top-right corner of the viewport so they overlay any layout
    mode (full titlebar, workspace split, etc.) and stay accessible at all times. */

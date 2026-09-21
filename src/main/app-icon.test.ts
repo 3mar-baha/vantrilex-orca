@@ -82,11 +82,14 @@ describe('app icon selection', () => {
     vi.useRealTimers()
   })
 
-  it('resolves classic, watercolor, blue, and invalid icon ids', () => {
+  it('resolves vantrilex, classic, watercolor, blue, and invalid icon ids', () => {
+    expect(getAppIconPath('vantrilex')).toBe(
+      '/src/shared/vantrilex-assets/vantrilex-crest.png?asset'
+    )
     expect(getAppIconPath('classic')).toBe('classic-icon')
     expect(getAppIconPath('watercolor')).toBe('watercolor-icon')
     expect(getAppIconPath('blue')).toBe('blue-icon')
-    expect(getAppIconPath('missing')).toBe('classic-icon')
+    expect(getAppIconPath('missing')).toBe('/src/shared/vantrilex-assets/vantrilex-crest.png?asset')
   })
 
   it('applies the selected icon to the dock and live windows', () => {
