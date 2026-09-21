@@ -25,6 +25,25 @@ verbatim for disaster recovery.
 
 ### Active plan
 
+Plan STEP6-UI-01 (approved 2026-09-20): four discrete triggers on the
+untouched Orca layout per `docs/08-ROADMAP.md`, `docs/21-DESIGN-SYSTEM.md`,
+`docs/22-SHOWCASE.md`, `docs/19-MOBILE-PAIRING.md`. Scope (no `src/`
+changes yet — /plan gate only): Trigger 1 `MicToggle.tsx` (arm/disarm
+voice pipeline via `window.api.voice`); Trigger 2 `ShowcaseButton.tsx`
+(invoke `project-showcase-builder` skill, generate/preview
+`docs/showcase.html` in DESIGN.md palette `#faf9f5`/`#cc785c`/`#141413`,
+serif display, zero cyber-cyan); Trigger 3 `MobilePairingModal.tsx`
+(Happy Coder `vendor/happy/` relay, QR single-use 120s nonce, token
+exchange, approval queue notifications); Trigger 4 `VoiceSelector.tsx`
+(male `5b90451e0cd34b2788841744af7c55c3` default / female
+`88c0375e46fa4e3b929755fa077ca5ad` toggle, persistent storage).
+Invariants: zero layout diff; `lint:design-system` on all touched
+renderer files; TDD suites under `src/renderer/src/components/` and
+`tests/ui/` (mount, event emission, bridge calls). Governing skills:
+clean-code-guard, project-showcase-builder, test-guard, docs-guard.
+Tests: component + composition suites. Rollback baseline: `4108e904a1`
+(HEAD, pushed, worktree clean at /plan).
+
 Plan STEP5-TERMINAL-01 (approved 2026-09-20): embedded terminal and
 multi-runner PTY panel per `docs/08-ROADMAP.md`, `docs/25-ELECTRON-IPC.md`,
 `docs/26-AGENT-LAUNCHER.md`. Scope (no `src/` changes yet — /plan gate
