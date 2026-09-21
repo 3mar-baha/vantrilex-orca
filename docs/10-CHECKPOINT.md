@@ -92,6 +92,19 @@ create` before code.
 
 ### Completed work
 
+- 2026-09-21: Ambient Orchestrator & Branding milestone COMPLETED.
+  Phase 1 `eb14818c12` (branding): Lucide icons + smart tooltips on all
+  4 status-bar triggers, crest in titlebar (isolated Vantrilex asset),
+  `vantrilex` window icon id as default (with settings picker support).
+  Phase 2 `f22332124a` (agent): terminal-watcher (exit + idle triggers,
+  bounded transcripts), Ammani briefing (muted-gated speech),
+  prompt-orchestrator (brain-driven Template-M, state-grounded inject +
+  re-arm), shared voice factory, `window.api.agent` + web fallback.
+  Phase 3 `6a3a9582ae` (skills): terminal-orchestrator,
+  prompt-crafter, meta-tool-router (+ `chore(test)` agent partition).
+  Verification: test:vantrilex 792/792 (120 files), tsc node+web 0,
+  oxlint 0, lint:design-system 0, zero #00FFFF.
+
 - 2026-09-21: STEP8-INTEGRATION-01 COMPLETED (post-v1.0.0). Commit
   `f8af99807c` (`feat(integration)`, 39 files, +1298/−42): full voice
   loop (DPAPI keyring store, voice IPC + `window.api.voice`, MicToggle
