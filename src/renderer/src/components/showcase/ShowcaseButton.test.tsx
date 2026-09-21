@@ -26,6 +26,23 @@ describe('showcase button', () => {
     })
   })
 
+  it('routes failures to the error toast channel when provided', async () => {
+    const generate = vi.fn(async () => {
+      throw new Error('preview failed')
+    })
+    const onError = vi.fn()
+    render(
+      <TooltipProvider>
+        <ShowcaseButton runner={{ generate }} onError={onError} />
+      </TooltipProvider>
+    )
+    screen.getByTestId('showcase-button').click()
+    await vi.waitFor(() => {
+      expect(onError).toHaveBeenCalledWith('preview failed')
+    })
+    expect(screen.queryByTestId('showcase-status')).toBeNull()
+  })
+
   it('surfaces generation failures as a note instead of throwing', async () => {
     const generate = vi.fn(async () => {
       throw new Error('skill unavailable')

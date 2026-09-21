@@ -36,12 +36,33 @@ function captor() {
   return { ipc, handlers }
 }
 
+function fakeKeyring() {
+  const keys = new Map<string, string[]>()
+  return {
+    addKey: (pool: 'fish' | 'groq', key: string) => {
+      keys.set(pool, [...(keys.get(pool) ?? []), key])
+    },
+    status: (pool: 'fish' | 'groq') => ({
+      configured: (keys.get(pool) ?? []).length > 0,
+      slots: (keys.get(pool) ?? []).length,
+      currentIndex: 0,
+      sinceRotation: 0
+    })
+  }
+}
+
 describe('voice ipc', () => {
   it('routes transcribe/think/speak through the service', async () => {
     const service = fakeService()
     const { ipc, handlers } = captor()
-    registerVoiceIpc(ipc, service)
-    expect([...handlers.keys()].sort()).toEqual(['voice:speak', 'voice:think', 'voice:transcribe'])
+    registerVoiceIpc(ipc, service, fakeKeyring() as never)
+    expect([...handlers.keys()].sort()).toEqual([
+      'voice:keyringSet',
+      'voice:keyringStatus',
+      'voice:speak',
+      'voice:think',
+      'voice:transcribe'
+    ])
     await expect(handlers.get('voice:transcribe')?.({}, { audio: [1, 2] })).resolves.toMatchObject({
       text: 'marhaba'
     })
@@ -54,10 +75,38 @@ describe('voice ipc', () => {
     expect(service.calls).toEqual(['transcribe:2', 'think:hi', 'speak:female:ahlan'])
   })
 
+  it('rounds keyring presence and key intake without leaking values', async () => {
+    const { ipc, handlers } = captor()
+    const keyring = fakeKeyring()
+    registerVoiceIpc(ipc, fakeService(), keyring as never)
+    await expect(handlers.get('voice:keyringStatus')?.({}, {})).resolves.toEqual({
+      fish: false,
+      groq: false
+    })
+    await expect(
+      handlers.get('voice:keyringSet')?.({}, { pool: 'groq', key: 'gsk-secret' })
+    ).resolves.toEqual({ configured: true })
+    await expect(handlers.get('voice:keyringStatus')?.({}, {})).resolves.toEqual({
+      fish: false,
+      groq: true
+    })
+  })
+
+  it('rejects bad pools and blank keys at the boundary', async () => {
+    const { ipc, handlers } = captor()
+    registerVoiceIpc(ipc, fakeService(), fakeKeyring() as never)
+    await expect(
+      handlers.get('voice:keyringSet')?.({}, { pool: 'openai', key: 'x' })
+    ).rejects.toThrow(VoiceValidationError)
+    await expect(
+      handlers.get('voice:keyringSet')?.({}, { pool: 'groq', key: '   ' })
+    ).rejects.toThrow(VoiceValidationError)
+  })
+
   it('rejects empty audio, blank text, and unknown voices', async () => {
     const service = fakeService()
     const { handlers } = captor()
-    registerVoiceIpc({ handle: (c, l) => handlers.set(c, l) }, service)
+    registerVoiceIpc({ handle: (c, l) => handlers.set(c, l) }, service, fakeKeyring() as never)
     await expect(handlers.get('voice:transcribe')?.({}, { audio: [] })).rejects.toThrow(
       VoiceValidationError
     )

@@ -38,6 +38,10 @@ vi.mock('./SidebarSettingsHelpMenu', () => ({
   SidebarSettingsHelpMenu: () => <button type="button">Settings</button>
 }))
 
+vi.mock('./VantrilexToolbar', () => ({
+  VantrilexToolbar: () => <div data-testid="vantrilex-toolbar-stub" />
+}))
+
 const roots: Root[] = []
 
 async function renderToolbar(onWorkspaceBoardToggle = vi.fn()): Promise<{

@@ -72,4 +72,40 @@ describe('runner prompt injection', () => {
       TerminalValidationError
     )
   })
+
+  it('auto-spawns a default runner when a workspace is provided', () => {
+    const written: string[][] = []
+    const spawner = {
+      spawn: () => {
+        const slot: string[] = []
+        written.push(slot)
+        return {
+          pid: 7,
+          write: (data: string) => slot.push(data),
+          resize: () => {},
+          kill: () => {},
+          onData: () => {},
+          onExit: () => {}
+        }
+      }
+    }
+    const deps: TerminalDeps = {
+      manager: new PtySessionManager(spawner, () => {}),
+      workspaceExists: () => true,
+      platform: 'linux'
+    }
+    const result = handleRunnerInject(deps, { prompt: PROMPT, workspace: 'O:/repo' })
+    expect(result).toMatchObject({ sessionId: 'session-1', spawned: true })
+    expect(written).toEqual([[`${PROMPT}\n`]])
+  })
+
+  it('still fails without a workspace to spawn from', () => {
+    const { deps } = depsWithSessions(0)
+    expect(() => handleRunnerInject(deps, { prompt: PROMPT, workspace: '   ' })).toThrow(
+      TerminalValidationError
+    )
+    expect(() => handleRunnerInject(deps, { prompt: PROMPT, cli: 'evil' })).toThrow(
+      TerminalValidationError
+    )
+  })
 })

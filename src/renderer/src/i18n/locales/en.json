@@ -3821,7 +3821,12 @@
               "pairingExpired": "Code expired",
               "ambientToggleLabel": "Toggle ambient briefings",
               "ambientTipArmed": "Ambient briefings armed — runner conclusions are spoken. Click to mute (watcher keeps recording).",
-              "ambientTipMuted": "Ambient briefings muted — click to arm spoken task briefings."
+              "ambientTipMuted": "Ambient briefings muted — click to arm spoken task briefings.",
+              "keysTitle": "API keys",
+              "keysClose": "Close",
+              "keysGuidance": "Keys stay in OS-encrypted storage and never leave this machine except to their provider.",
+              "keysToggle": "Toggle visibility",
+              "keysSave": "Save"
             },
             "codexSignInSuccess": "Signed in to Codex",
             "codexSignInError": "Codex sign-in failed. Please try again."

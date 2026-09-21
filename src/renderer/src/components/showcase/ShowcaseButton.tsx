@@ -14,10 +14,12 @@ export type ShowcaseInjector = {
 
 export function ShowcaseButton({
   runner,
-  injector = null
+  injector = null,
+  onError
 }: {
   runner: ShowcaseRunner
   injector?: ShowcaseInjector | null
+  onError?: (message: string) => void
 }) {
   const [status, setStatus] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -31,7 +33,7 @@ export function ShowcaseButton({
       const result = await runner.generate()
       setStatus(result.path)
     } catch (error) {
-      setStatus((error as Error).message)
+      reportError((error as Error).message)
     } finally {
       setBusy(false)
     }
@@ -46,9 +48,18 @@ export function ShowcaseButton({
       const result = await injector.inject(SHOWCASE_GENERATION_PROMPT)
       setStatus(`Injected into ${result.sessionId}`)
     } catch (error) {
-      setStatus((error as Error).message)
+      reportError((error as Error).message)
     } finally {
       setBusy(false)
+    }
+  }
+
+  function reportError(message: string): void {
+    if (onError) {
+      onError(message)
+      setStatus(null)
+    } else {
+      setStatus(message)
     }
   }
 

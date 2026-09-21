@@ -16,8 +16,8 @@ function subscribe<T>(channel: string, cb: (event: T) => void): () => void {
 
 export const runnerTerminalApi: RunnerTerminalApi = {
   launch: (request: RunnerLaunchRequest) => ipcRenderer.invoke('runner:launch', request),
-  inject: (prompt: string, sessionId?: string) =>
-    ipcRenderer.invoke('runner:inject', sessionId ? { prompt, sessionId } : { prompt }),
+  inject: (prompt: string, opts?: { sessionId?: string; workspace?: string; cli?: string }) =>
+    ipcRenderer.invoke('runner:inject', { prompt, ...opts }),
   send: (sessionId: string, input: string) =>
     ipcRenderer.invoke('runner:send', { sessionId, data: input }),
   resize: (sessionId: string, cols: number, rows: number) =>

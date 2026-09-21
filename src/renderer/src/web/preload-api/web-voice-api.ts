@@ -9,7 +9,9 @@ export function createWebVoiceApi(): Partial<PreloadApi> {
     voice: {
       transcribe: () => Promise.reject(unsupported('transcribe')),
       think: () => Promise.reject(unsupported('think')),
-      speak: () => Promise.reject(unsupported('speak'))
+      speak: () => Promise.reject(unsupported('speak')),
+      keyringStatus: () => Promise.reject(unsupported('keyringStatus')),
+      keyringSet: () => Promise.reject(unsupported('keyringSet'))
     }
   }
 }

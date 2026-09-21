@@ -39,7 +39,7 @@ function broadcastSessionEvent(event: SessionEvent): void {
 
 function registerTerminalVoiceAndAgentIpcHandlers(): void {
   const stack = createVoiceStack()
-  registerVoiceIpc(ipcMain, stack.service)
+  registerVoiceIpc(ipcMain, stack.service, stack.keyring)
   let ambientArmed = true
   const watcher = new TerminalWatcher((conclusion) => {
     void briefConclusion({ brain: stack.brain, tts: stack.tts }, conclusion, {

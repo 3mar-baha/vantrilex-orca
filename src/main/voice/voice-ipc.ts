@@ -1,6 +1,7 @@
 import type { AmmaniBrain } from './brain'
 import type { GroqStt } from './stt'
 import type { FishTts, VoiceChoice } from './tts'
+import type { KeyPoolName, Keyring } from './keyring'
 
 export class VoiceValidationError extends Error {
   constructor(message: string) {
@@ -69,6 +70,13 @@ function readVoice(payload: unknown): VoiceChoice {
   return payload['voice']
 }
 
+function readPool(payload: unknown): KeyPoolName {
+  if (!isRecord(payload) || (payload['pool'] !== 'fish' && payload['pool'] !== 'groq')) {
+    throw new VoiceValidationError("Keyring request requires pool 'fish' or 'groq'")
+  }
+  return payload['pool']
+}
+
 export function createVoiceService(deps: VoiceServiceDeps): VoiceService {
   return {
     transcribe: (audio) => deps.stt.transcribe(audio),
@@ -77,7 +85,11 @@ export function createVoiceService(deps: VoiceServiceDeps): VoiceService {
   }
 }
 
-export function registerVoiceIpc(ipc: IpcHandleSeed, service: VoiceService): void {
+export function registerVoiceIpc(
+  ipc: IpcHandleSeed,
+  service: VoiceService,
+  keyring: Keyring
+): void {
   ipc.handle('voice:transcribe', async (_event, payload: unknown) =>
     service.transcribe(readAudio(payload))
   )
@@ -87,4 +99,17 @@ export function registerVoiceIpc(ipc: IpcHandleSeed, service: VoiceService): voi
   ipc.handle('voice:speak', async (_event, payload: unknown) =>
     service.speak(readText(payload, 'text'), readVoice(payload))
   )
+  ipc.handle('voice:keyringStatus', async () => ({
+    fish: keyring.status('fish').configured,
+    groq: keyring.status('groq').configured
+  }))
+  ipc.handle('voice:keyringSet', async (_event, payload: unknown) => {
+    if (!isRecord(payload)) {
+      throw new VoiceValidationError('Keyring request must be an object')
+    }
+    const pool = readPool(payload)
+    const key = readText(payload, 'key')
+    keyring.addKey(pool, key)
+    return { configured: keyring.status(pool).configured }
+  })
 }

@@ -111,6 +111,69 @@ describe('mic voice loop', () => {
     })
   })
 
+  it('opens key intake on missing-keys failures instead of raw errors', async () => {
+    stubMedia()
+    const onMissingKeys = vi.fn()
+    const onError = vi.fn()
+    const keylessLoop = {
+      transcribe: async () => {
+        throw new Error("Keyring pool 'groq' has no keys")
+      },
+      think: async () => ({ reply: '' }),
+      speak: async () => ({ audio: [] as number[] })
+    }
+    render(
+      <TooltipProvider>
+        <MicToggle
+          bridge={bridge}
+          loop={keylessLoop}
+          createRecorder={(stream) => new FakeRecorder(stream) as unknown as MediaRecorder}
+          createAudio={() => ({ play: async () => {} })}
+          onMissingKeys={onMissingKeys}
+          onError={onError}
+        />
+      </TooltipProvider>
+    )
+    screen.getByTestId('mic-toggle').click()
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    screen.getByTestId('mic-toggle').click()
+    await vi.waitFor(() => {
+      expect(onMissingKeys).toHaveBeenCalledTimes(1)
+    })
+    expect(onError).not.toHaveBeenCalled()
+    expect(screen.getByTestId('voice-status').textContent).toMatch(/keys missing/i)
+  })
+
+  it('routes non-key failures to the error toast channel', async () => {
+    stubMedia()
+    const onError = vi.fn()
+    const failingLoop = {
+      transcribe: async () => {
+        throw new Error('provider timeout')
+      },
+      think: async () => ({ reply: '' }),
+      speak: async () => ({ audio: [] as number[] })
+    }
+    render(
+      <TooltipProvider>
+        <MicToggle
+          bridge={bridge}
+          loop={failingLoop}
+          createRecorder={(stream) => new FakeRecorder(stream) as unknown as MediaRecorder}
+          createAudio={() => ({ play: async () => {} })}
+          onError={onError}
+        />
+      </TooltipProvider>
+    )
+    screen.getByTestId('mic-toggle').click()
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    screen.getByTestId('mic-toggle').click()
+    await vi.waitFor(() => {
+      expect(onError).toHaveBeenCalledWith('provider timeout')
+    })
+    expect(screen.queryByTestId('voice-status')).toBeNull()
+  })
+
   it('reports microphone denial without crashing', async () => {
     Object.defineProperty(window.navigator, 'mediaDevices', {
       value: {

@@ -41,19 +41,36 @@ describe('trigger composition', () => {
   })
 })
 
-describe('status bar surface wiring', () => {
-  it('imports and renders the four triggers in the right group', () => {
+describe('trigger mount points', () => {
+  it('keeps the status bar free of tool triggers except the ambient toggle', () => {
     const source = readFileSync(
       join(process.cwd(), 'src/renderer/src/components/status-bar/StatusBarSurface.tsx'),
       'utf8'
     )
     for (const name of ['MicToggle', 'ShowcaseButton', 'MobilePairingModal', 'VoiceSelector']) {
-      expect(source).toContain(name)
+      expect(source).not.toContain(name)
     }
-    const rightGroup = source.indexOf('<div className="flex-1" />')
-    for (const name of ['<MicToggle', '<ShowcaseButton', '<VoiceSelector']) {
-      expect(source.indexOf(name)).toBeGreaterThan(rightGroup)
+    expect(source).toContain('<AmbientToggle')
+  })
+
+  it('mounts the tool cluster in the sidebar footer', () => {
+    const toolbar = readFileSync(
+      join(process.cwd(), 'src/renderer/src/components/sidebar/SidebarToolbar.tsx'),
+      'utf8'
+    )
+    expect(toolbar).toContain('<VantrilexToolbar />')
+    const cluster = readFileSync(
+      join(process.cwd(), 'src/renderer/src/components/sidebar/VantrilexToolbar.tsx'),
+      'utf8'
+    )
+    for (const name of [
+      '<MicToggle',
+      '<VoiceSelector',
+      '<ShowcaseButton',
+      'MobilePairingModal',
+      'ApiKeysModal'
+    ]) {
+      expect(cluster).toContain(name)
     }
-    expect(source).toContain('lazyWithRetry')
   })
 })

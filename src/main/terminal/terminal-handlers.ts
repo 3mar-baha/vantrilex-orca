@@ -94,25 +94,47 @@ export function handleRunnerLaunch(
   return { sessionId: launched.id, pid: launched.pid }
 }
 
-export function handleRunnerInject(deps: TerminalDeps, payload: unknown): { sessionId: string } {
+export function handleRunnerInject(
+  deps: TerminalDeps,
+  payload: unknown
+): { sessionId: string; spawned: boolean } {
   if (!isRecord(payload)) {
     throw new TerminalValidationError('Terminal request must be an object')
   }
   const prompt = readString(payload, 'prompt')
+  const submitted = prompt.endsWith('\n') ? prompt : `${prompt}\n`
   const requested =
     typeof payload['sessionId'] === 'string' && (payload['sessionId'] as string).trim() !== ''
       ? (payload['sessionId'] as string)
       : deps.manager.latestId()
-  if (!requested) {
+  if (requested) {
+    try {
+      deps.manager.write(requested, submitted)
+    } catch (error) {
+      throw new TerminalValidationError((error as Error).message)
+    }
+    return { sessionId: requested, spawned: false }
+  }
+  const workspace = payload['workspace']
+  if (typeof workspace !== 'string' || workspace.trim() === '') {
     throw new TerminalValidationError('No active runner session — open a runner tab first')
   }
-  const submitted = prompt.endsWith('\n') ? prompt : `${prompt}\n`
+  const cli =
+    typeof payload['cli'] === 'string' && (payload['cli'] as string).trim() !== ''
+      ? (payload['cli'] as string)
+      : 'claude'
+  const launched = handleRunnerLaunch(deps, {
+    cli,
+    workspace,
+    cols: readDimension(payload, 'cols', DEFAULT_COLS),
+    rows: readDimension(payload, 'rows', DEFAULT_ROWS)
+  })
   try {
-    deps.manager.write(requested, submitted)
+    deps.manager.write(launched.sessionId, submitted)
   } catch (error) {
     throw new TerminalValidationError((error as Error).message)
   }
-  return { sessionId: requested }
+  return { sessionId: launched.sessionId, spawned: true }
 }
 
 export function handleRunnerTerminate(deps: TerminalDeps, payload: unknown): { exited: boolean } {

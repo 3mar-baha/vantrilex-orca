@@ -1,5 +1,5 @@
-import { PanelsTopLeft, RefreshCw, Smartphone } from 'lucide-react'
-import React, { useState } from 'react'
+import { PanelsTopLeft, RefreshCw } from 'lucide-react'
+import React from 'react'
 import { lazyWithRetry } from '@/lib/lazy-with-retry'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {
@@ -30,15 +30,7 @@ import { ProviderLetterBadge, ProviderSegment } from './StatusBarProviderSegment
 import { useStatusBarController } from './use-status-bar-controller'
 import { StatusBarVisibilityMenu } from './StatusBarVisibilityMenu'
 import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
-import { useActiveRepo } from '../../store/selectors'
 import { AmbientToggle } from '../voice/AmbientToggle'
-import { MicToggle } from '../voice/MicToggle'
-import { VoiceSelector } from '../voice/VoiceSelector'
-import { micBridge, voiceLoop, voiceStore } from '../voice/voice-ui-state'
-import { ShowcaseButton } from '../showcase/ShowcaseButton'
-import { createShowcaseRunner } from '../showcase/showcase-runner'
-import { MobilePairingModal } from '../mobile/MobilePairingModal'
-import { createMobileRelay } from '../mobile/mobile-relay'
 
 const PetStatusSegment = lazyWithRetry(() =>
   import('./PetStatusSegment').then((module) => ({ default: module.PetStatusSegment }))
@@ -63,8 +55,6 @@ export function StatusBarSurface({
   floatingTerminalOpen
 }: StatusBarProps): React.JSX.Element | null {
   const controller = useStatusBarController(floatingTerminalOpen)
-  const activeRepo = useActiveRepo()
-  const [pairingOpen, setPairingOpen] = useState(false)
   if (!controller) {
     return null
   }
@@ -259,48 +249,6 @@ export function StatusBarSurface({
         <SkillUpdateStatusSegment iconOnly={iconOnly} />
         <UpdateStatusSegment compact={compact} iconOnly={iconOnly} />
         <AmbientToggle bridge={window.api.agent} />
-        <MicToggle
-          bridge={micBridge}
-          iconOnly={iconOnly}
-          loop={voiceLoop}
-          voice={voiceStore.getVoice()}
-        />
-        <ShowcaseButton
-          runner={createShowcaseRunner(activeRepo?.path ?? null, window.api.shell)}
-          injector={{ inject: (prompt) => window.api.runnerTerminal.inject(prompt) }}
-        />
-        <VoiceSelector store={voiceStore} />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              data-testid="pairing-trigger"
-              type="button"
-              aria-label={translate(
-                'auto.components.status.bar.VantrilexTriggers.pairingTitle',
-                'Pair mobile device'
-              )}
-              className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setPairingOpen(true)}
-            >
-              <span aria-hidden>
-                <Smartphone size={12} />
-              </span>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={6}>
-            {translate(
-              'auto.components.status.bar.VantrilexTriggers.pairingTip',
-              'Pair a mobile device — scan the QR to approve runner steps remotely.'
-            )}
-          </TooltipContent>
-        </Tooltip>
-        {pairingOpen ? (
-          <MobilePairingModal
-            relay={createMobileRelay(window.api.relay)}
-            open
-            onClose={() => setPairingOpen(false)}
-          />
-        ) : null}
         <React.Suspense fallback={null}>
           {petEnabled ? <PetStatusSegment /> : null}
           {showResourceUsage ? (

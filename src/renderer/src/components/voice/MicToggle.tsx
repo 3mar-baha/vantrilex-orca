@@ -43,7 +43,9 @@ export function MicToggle({
   voice = 'male',
   terminal = null,
   createRecorder,
-  createAudio
+  createAudio,
+  onMissingKeys,
+  onError
 }: {
   bridge: MicBridge
   iconOnly?: boolean
@@ -52,6 +54,8 @@ export function MicToggle({
   terminal?: CommandTarget | null
   createRecorder?: RecorderFactory
   createAudio?: AudioFactory
+  onMissingKeys?: () => void
+  onError?: (message: string) => void
 }) {
   const [armed, setArmed] = useState(bridge.getArmed())
   const [status, setStatus] = useState<string | null>(null)
@@ -82,7 +86,16 @@ export function MicToggle({
       await (createAudio ?? ((link) => new Audio(link)))(url).play()
       setStatus(null)
     } catch (error) {
-      setStatus((error as Error).message)
+      const message = (error as Error).message
+      if (onMissingKeys && /keyring|no keys|has no keys/i.test(message)) {
+        onMissingKeys()
+        setStatus('Voice keys missing — add them to continue')
+      } else if (onError) {
+        onError(message)
+        setStatus(null)
+      } else {
+        setStatus(message)
+      }
     }
   }
 

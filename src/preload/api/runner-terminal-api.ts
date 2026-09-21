@@ -24,7 +24,10 @@ export type TerminalDataEvent = {
 
 export type RunnerTerminalApi = {
   launch: (request: RunnerLaunchRequest) => Promise<RunnerLaunchResult>
-  inject: (prompt: string, sessionId?: string) => Promise<{ sessionId: string }>
+  inject: (
+    prompt: string,
+    opts?: { sessionId?: string; workspace?: string; cli?: string }
+  ) => Promise<{ sessionId: string; spawned: boolean }>
   send: (sessionId: string, input: string) => Promise<{ accepted: boolean }>
   resize: (sessionId: string, cols: number, rows: number) => Promise<{ applied: boolean }>
   terminate: (sessionId: string) => Promise<{ exited: boolean }>
