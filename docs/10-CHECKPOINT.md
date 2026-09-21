@@ -92,6 +92,16 @@ create` before code.
 
 ### Completed work
 
+- 2026-09-21: STEP7-RELEASE-01 COMPLETED — entire 7-step Vantrilex-Orca
+  migration roadmap certified. Hardening commit (CSP build-time meta
+  plugin, modulePreload polyfill off, packaged-asar verifier, secrets
+  audit: only upstream synthetic fixtures, zero actionable findings).
+  Build green; NSIS x64 packaged: `dist/orca-windows-setup.exe`
+  (190MB), `dist/win-unpacked/Orca.exe` (239MB); asar integrity 4665
+  files, 0 path leaks, CSP present, 0 inline scripts. `test:vantrilex`
+  758/758, tsc node+web clean. Tag `v1.0.0` on green HEAD. Production
+  ready.
+
 - 2026-09-21: STEP6-UI-01 COMPLETED. Implementation commit `c042deec38`
   (`feat(ui)`, 15 files, +575): MicToggle, VoiceSelector (+
   localStorage-backed singletons), ShowcaseButton (+ shell.openPath
