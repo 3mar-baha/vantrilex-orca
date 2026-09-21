@@ -25,6 +25,20 @@ verbatim for disaster recovery.
 
 ### Active plan
 
+Plan STEP7-RELEASE-01 (approved 2026-09-21): final production hardening,
+packaging, and v1.0.0 release per `docs/15-DISTRIBUTION.md`,
+`docs/12-SECURITY.md`, `docs/08-ROADMAP.md`. Scope (no builds or tags
+yet — /plan gate only): pre-release audit (plaintext-secrets sweep,
+CSP enforcement review in `src/renderer/index.html`, `test:vantrilex`
+758 green, tsc node+web clean); packaging pipeline (`pnpm run build`
+→ `electron-builder --config config/electron-builder.config.cjs --win`,
+NSIS x64, `dist/win-unpacked/` integrity: app.asar complete, no
+external drive path leakage); release tagging (checkpoint sync, tag
+`v1.0.0` on green HEAD, push tag + branch). Governing skills:
+clean-code-guard, test-guard, docs-guard, project-stress-tester. Tests:
+full `test:vantrilex` + packaging verification. Rollback baseline:
+`60ecddd511` (HEAD, pushed, worktree clean at /plan).
+
 Plan STEP6-UI-01 (approved 2026-09-20): four discrete triggers on the
 untouched Orca layout per `docs/08-ROADMAP.md`, `docs/21-DESIGN-SYSTEM.md`,
 `docs/22-SHOWCASE.md`, `docs/19-MOBILE-PAIRING.md`. Scope (no `src/`
