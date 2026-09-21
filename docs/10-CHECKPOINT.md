@@ -92,6 +92,17 @@ create` before code.
 
 ### Completed work
 
+- 2026-09-21: STEP9-UI-UX-01 COMPLETED. Commit `cee6c68c20` (`feat(ui)`,
+  23 files, +755/−83): `voice:keyringStatus`/`keyringSet` IPC + preload
+  (presence booleans only, values never logged), ApiKeysModal (masked
+  entry, visibility toggle, live badges, blank-key guard), tools
+  relocated from status bar to sidebar footer cluster
+  (`VantrilexToolbar`: mic, voice, showcase, pairing, keys), runtime
+  errors routed to dismissible sonner toasts, `runner:inject`
+  auto-spawns a default runner from workspace when no session is alive.
+  Verification: 821/821 across 127 files, tsc node+web 0, oxlint 0
+  (incl. pre-commit hook), `lint:design-system` 0, zero `#00FFFF`.
+
 - 2026-09-21: Ambient Orchestrator & Branding milestone COMPLETED.
   Phase 1 `eb14818c12` (branding): Lucide icons + smart tooltips on all
   4 status-bar triggers, crest in titlebar (isolated Vantrilex asset),
