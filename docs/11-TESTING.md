@@ -37,3 +37,20 @@ incident.
 New modules ship with their suites in the same commit. Touched-area
 suites run before every `/sync`; the full suite runs before release
 (Step 7). A red gate blocks the commit — no exceptions, no skips.
+
+### Partitioned suites and Windows exemptions
+
+`pnpm run test:vantrilex` targets the Vantrilex-owned subsystems only:
+`tests/voice/`, `tests/terminal/`, `tests/ui/`, `src/main/foundry/`,
+the voice/showcase/mobile/terminal renderer components, and the
+status-bar surface suites. It is the gate for Vantrilex phases.
+
+Pre-existing upstream suites that assert POSIX-only semantics are
+Windows-exempt and do not gate Vantrilex work. Known exemption:
+`src/main/ipc/runtime-upload-slice-boundaries.test.ts` ("refuses a
+wrong inode when only the device is unreported", last touched by
+upstream `68f0b2e835`) — inode identity is not observable on Windows
+and the file is outside every Vantrilex scope. Broader environment
+failures (WSL-dependent, watcher-dependent, SSH-dependent suites)
+are likewise upstream-owned. Exemptions are recorded here, never
+silenced in code: no test is skipped, weakened, or deleted to pass.
